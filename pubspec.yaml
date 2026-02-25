@@ -2,7 +2,7 @@ name: my_sports_tracker
 description: "A new Flutter project for sports tracking."
 
 publish_to: 'none'
-version: 1.0.0+1
+version: 1.0.1+2
 
 environment:
   sdk: ^3.7.2
@@ -10,7 +10,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-
+  ui_utility_package:
+    path: ../packages/ui_utility_package
+  flutter_bloc:
+  equatable:
+  shared_preferences:
   cupertino_icons: ^1.0.8
 
 dev_dependencies:

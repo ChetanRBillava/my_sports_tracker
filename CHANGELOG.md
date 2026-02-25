@@ -27,6 +27,29 @@ Here we write the updates of future releases.
 
 
 
+## [1.0.1] - 25-02-2026
+
+### Added
+- All existing UI screens and widgets.
+  - Home screen
+  - Match screen and necessary widgets
+  - Statistics screen
+    - Player stats widget
+    - Batting stats widget
+    - Bowling stats widget
+- Necessary basic components
+  - Utils
+  - Custom print
+- Flutter bloc plugin
+- Shared preference and equatable plugin
+- In house UI Utility package
+- App theme cubit
+
+### Changed
+- Main file and introduced folder hierarchy
+
+
+
 ## [1.0.0] - 20-02-2026
 
 ### Added
