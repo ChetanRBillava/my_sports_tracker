@@ -3,14 +3,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
+import '../../../../data/models/player_model.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import '../../../widgets/batting_statistics_widget.dart';
 import '../../../widgets/bowling_statistics_widget.dart';
 
 UiUtilityPackage uiUtilityPackage = UiUtilityPackage();
 
-Widget playerTileWidget({required int index}) {
+Widget playerTileWidget({required int index, required PlayerModel player}) {
   bool isOpen = false;
+
+  String getSR() {
+    String strikeRate = (((player.stats?.batting?.runs ?? 0) /
+                (player.stats?.batting?.balls ?? 0)) *
+            100)
+        .toStringAsFixed(2);
+
+    return strikeRate;
+  }
+
+  String getEconomy() {
+    String economy = (((player.stats!.bowling!.runs ?? 0) /
+                (player.stats!.bowling!.balls ?? 0)) *
+            6)
+        .toStringAsFixed(2);
+
+    return economy;
+  }
+
   return StatefulBuilder(
     builder: (context, setThisState) {
       return BlocBuilder<AppThemeCubit, AppThemeState>(
@@ -30,8 +50,8 @@ Widget playerTileWidget({required int index}) {
                     backgroundColor:
                         appThemeState.themeClass.appbarBackgroundColor,
                     child: uiUtilityPackage.customText(
-                      text: 'P${index + 1}',
-                      fontSize: TextSize.medium,
+                      text: player.name[0].toUpperCase(),
+                      fontSize: TextSize.label,
                       overrideColor: appThemeState.themeClass.textColor_1,
                       fontWeight: FontWeight.bold,
                     ),
@@ -40,11 +60,14 @@ Widget playerTileWidget({required int index}) {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      uiUtilityPackage.customText(
-                        text: 'Player Name',
-                        fontSize: TextSize.title,
-                        overrideColor: appThemeState.themeClass.white,
-                        fontWeight: FontWeight.bold,
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width * 0.6,
+                        child: uiUtilityPackage.customText(
+                          text: player.name.toUpperCase(),
+                          fontSize: TextSize.title,
+                          overrideColor: appThemeState.themeClass.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
 
                       isOpen
@@ -59,12 +82,20 @@ Widget playerTileWidget({required int index}) {
                               ),
                               BattingStatisticsWidget(
                                 hideLabel: true,
-                                runs: '100',
-                                balls: '50',
-                                fours: '20',
-                                sixes: '10',
-                                sr: '200.00',
-                                player: 'ABC',
+                                runs:
+                                    (player.stats?.batting?.runs ?? 0)
+                                        .toString(),
+                                balls:
+                                    (player.stats?.batting?.balls ?? 0)
+                                        .toString(),
+                                fours:
+                                    (player.stats?.batting?.fours ?? 0)
+                                        .toString(),
+                                sixes:
+                                    (player.stats?.batting?.sixes ?? 0)
+                                        .toString(),
+                                sr: getSR(),
+                                player: player.name,
                               ),
 
                               SizedBox(height: 8),
@@ -77,13 +108,23 @@ Widget playerTileWidget({required int index}) {
                               ),
                               BowlingStatisticsWidget(
                                 hideLabel: true,
-                                balls: '100',
-                                runs: '50',
-                                wickets: '10',
-                                noBalls: '20',
-                                wides: '10',
-                                economy: '12.00',
-                                player: 'ABC',
+                                balls:
+                                    (player.stats?.bowling?.balls ?? 0)
+                                        .toString(),
+                                runs:
+                                    (player.stats?.bowling?.runs ?? 0)
+                                        .toString(),
+                                wickets:
+                                    (player.stats?.bowling?.wickets ?? 0)
+                                        .toString(),
+                                noBalls:
+                                    (player.stats?.bowling?.noBalls ?? 0)
+                                        .toString(),
+                                wides:
+                                    (player.stats?.bowling?.wides ?? 0)
+                                        .toString(),
+                                economy: getEconomy(),
+                                player: player.name,
                               ),
 
                               SizedBox(height: 8),
@@ -110,7 +151,10 @@ Widget playerTileWidget({required int index}) {
                                                 appThemeState.themeClass.white,
                                           ),
                                           uiUtilityPackage.customText(
-                                            text: '100',
+                                            text:
+                                                (player.stats?.match?.played ??
+                                                        0)
+                                                    .toString(),
                                             fontSize: TextSize.medium,
                                             overrideColor:
                                                 appThemeState.themeClass.white,
@@ -131,7 +175,9 @@ Widget playerTileWidget({required int index}) {
                                                 appThemeState.themeClass.white,
                                           ),
                                           uiUtilityPackage.customText(
-                                            text: '50',
+                                            text:
+                                                (player.stats?.match?.won ?? 0)
+                                                    .toString(),
                                             fontSize: TextSize.medium,
                                             overrideColor:
                                                 appThemeState.themeClass.white,
@@ -152,7 +198,9 @@ Widget playerTileWidget({required int index}) {
                                                 appThemeState.themeClass.white,
                                           ),
                                           uiUtilityPackage.customText(
-                                            text: '25',
+                                            text:
+                                                (player.stats?.match?.motm ?? 0)
+                                                    .toString(),
                                             fontSize: TextSize.medium,
                                             overrideColor:
                                                 appThemeState.themeClass.white,
@@ -170,12 +218,13 @@ Widget playerTileWidget({required int index}) {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               uiUtilityPackage.customText(
-                                text: 'ID: player_${index + 1}',
+                                text: 'ID: ${player.id}',
                                 fontSize: TextSize.normal,
                                 overrideColor: appThemeState.themeClass.white,
                               ),
                               uiUtilityPackage.customText(
-                                text: 'RUNS: 100 | S/R: 120.12 | WICKETS: 10',
+                                text:
+                                    'RUNS: ${player.stats?.batting?.runs} | S/R: ${getSR()} | WICKETS: ${player.stats?.bowling?.wickets}',
                                 fontSize: TextSize.normal,
                                 overrideColor: appThemeState.themeClass.white,
                               ),

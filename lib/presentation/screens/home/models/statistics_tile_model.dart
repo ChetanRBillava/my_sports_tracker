@@ -1,10 +1,14 @@
 import 'dart:convert';
 
+import 'package:my_sports_tracker/data/models/player_model.dart';
+
+import '../../../../core/constants/enums.dart';
+
 class StatisticsTileModel {
-  String? title;
+  String title;
   List<Stat>? stats;
 
-  StatisticsTileModel({this.title, this.stats});
+  StatisticsTileModel({required this.title, this.stats});
 
   StatisticsTileModel copyWith({String? title, List<Stat>? stats}) =>
       StatisticsTileModel(
@@ -35,12 +39,16 @@ class StatisticsTileModel {
 
 class Stat {
   String? title;
-  String? type;
-  List<String>? players;
+  StatTileEnums type;
+  List<PlayerModel>? players;
 
-  Stat({this.title, this.type, this.players});
+  Stat({this.title, required this.type, this.players});
 
-  Stat copyWith({String? title, String? type, List<String>? players}) => Stat(
+  Stat copyWith({
+    String? title,
+    StatTileEnums? type,
+    List<PlayerModel>? players,
+  }) => Stat(
     title: title ?? this.title,
     type: type ?? this.type,
     players: players ?? this.players,
@@ -56,13 +64,13 @@ class Stat {
     players:
         json["players"] == null
             ? []
-            : List<String>.from(json["players"]!.map((x) => x)),
+            : List<PlayerModel>.from(json["players"]!.map((x) => x)),
   );
 
   Map<String, dynamic> toMap() => {
     "title": title,
     "type": type,
     "players":
-        players == null ? [] : List<dynamic>.from(players!.map((x) => x)),
+        players == null ? [] : List<PlayerModel>.from(players!.map((x) => x)),
   };
 }

@@ -1,0 +1,86 @@
+import 'dart:convert';
+
+import 'package:my_sports_tracker/data/models/player_mini_model.dart';
+
+import 'batting_model.dart';
+import 'bowling_model.dart';
+
+class MatchStatsModel {
+  ManOfTheMatch? manOfTheMatch;
+  Batting? bestBatting;
+  Bowling? bestBowling;
+
+  MatchStatsModel({this.manOfTheMatch, this.bestBatting, this.bestBowling});
+
+  MatchStatsModel copyWith({
+    ManOfTheMatch? manOfTheMatch,
+    Batting? bestBatting,
+    Bowling? bestBowling,
+  }) => MatchStatsModel(
+    manOfTheMatch: manOfTheMatch ?? this.manOfTheMatch,
+    bestBatting: bestBatting ?? this.bestBatting,
+    bestBowling: bestBowling ?? this.bestBowling,
+  );
+
+  factory MatchStatsModel.fromJson(String str) =>
+      MatchStatsModel.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory MatchStatsModel.fromMap(Map<String, dynamic> json) => MatchStatsModel(
+    manOfTheMatch:
+        json["manOfTheMatch"] == null
+            ? null
+            : ManOfTheMatch.fromMap(json["manOfTheMatch"]),
+    bestBatting:
+        json["bestBatting"] == null
+            ? null
+            : Batting.fromMap(json["bestBatting"]),
+    bestBowling:
+        json["bestBowling"] == null
+            ? null
+            : Bowling.fromMap(json["bestBowling"]),
+  );
+
+  Map<String, dynamic> toMap() => {
+    "manOfTheMatch": manOfTheMatch?.toMap(),
+    "bestBatting": bestBatting?.toMap(),
+    "bestBowling": bestBowling?.toMap(),
+  };
+}
+
+class ManOfTheMatch {
+  PlayerMiniModel? player;
+  Batting? batting;
+  Bowling? bowling;
+
+  ManOfTheMatch({this.player, this.batting, this.bowling});
+
+  ManOfTheMatch copyWith({
+    PlayerMiniModel? player,
+    Batting? batting,
+    Bowling? bowling,
+  }) => ManOfTheMatch(
+    player: player ?? this.player,
+    batting: batting ?? this.batting,
+    bowling: bowling ?? this.bowling,
+  );
+
+  factory ManOfTheMatch.fromJson(String str) =>
+      ManOfTheMatch.fromMap(json.decode(str));
+
+  String toJson() => json.encode(toMap());
+
+  factory ManOfTheMatch.fromMap(Map<String, dynamic> json) => ManOfTheMatch(
+    player:
+        json["player"] == null ? null : PlayerMiniModel.fromMap(json["player"]),
+    batting: json["batting"] == null ? null : Batting.fromMap(json["batting"]),
+    bowling: json["bowling"] == null ? null : Bowling.fromMap(json["bowling"]),
+  );
+
+  Map<String, dynamic> toMap() => {
+    "player": player?.toMap(),
+    "batting": batting?.toMap(),
+    "bowling": bowling?.toMap(),
+  };
+}

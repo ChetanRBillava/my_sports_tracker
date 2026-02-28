@@ -20,3 +20,5 @@ enum AppColors {
   cardBackgroundColor,
   cardBorderColor,
 }
+
+enum StatTileEnums { wins, motm, runs, sixes, fours, sr, wickets, economy }

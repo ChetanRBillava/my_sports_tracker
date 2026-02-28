@@ -27,6 +27,20 @@ Here we write the updates of future releases.
 
 
 
+## [1.0.2] - 28-02-2026
+
+### Added
+- Bloc  logics for Home Screen
+- Player and Series data import
+- Main models
+
+### Changed
+- "Get color" cubit calls in home screen with more simplified and optimal methods.
+- Statistics tile parameter with actual model
+- Player and Series widget mapped with actual data
+
+
+
 ## [1.0.1] - 25-02-2026
 
 ### Added
