@@ -22,3 +22,5 @@ enum AppColors {
 }
 
 enum StatTileEnums { wins, motm, runs, sixes, fours, sr, wickets, economy }
+
+enum PlayerType { batter, bowler }

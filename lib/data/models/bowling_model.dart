@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:my_sports_tracker/data/models/player_mini_model.dart';
 
-class Bowling {
+class BowlingModel {
   PlayerMiniModel player;
   int balls;
   int runs;
@@ -10,7 +10,7 @@ class Bowling {
   int noBalls;
   int wickets;
 
-  Bowling({
+  BowlingModel({
     required this.player,
     required this.balls,
     required this.runs,
@@ -19,14 +19,14 @@ class Bowling {
     required this.wickets,
   });
 
-  Bowling copyWith({
+  BowlingModel copyWith({
     PlayerMiniModel? player,
     int? balls,
     int? runs,
     int? wides,
     int? noBalls,
     int? wickets,
-  }) => Bowling(
+  }) => BowlingModel(
     player: player ?? this.player,
     balls: balls ?? this.balls,
     runs: runs ?? this.runs,
@@ -35,11 +35,12 @@ class Bowling {
     wickets: wickets ?? this.wickets,
   );
 
-  factory Bowling.fromJson(String str) => Bowling.fromMap(json.decode(str));
+  factory BowlingModel.fromJson(String str) =>
+      BowlingModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Bowling.fromMap(Map<String, dynamic> json) => Bowling(
+  factory BowlingModel.fromMap(Map<String, dynamic> json) => BowlingModel(
     player: PlayerMiniModel.fromMap(json["player"]),
     balls: json["balls"],
     runs: json["runs"],

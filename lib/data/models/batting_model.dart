@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:my_sports_tracker/data/models/player_mini_model.dart';
 
-class Batting {
+class BattingModel {
   PlayerMiniModel player;
   int runs;
   int balls;
@@ -11,7 +11,7 @@ class Batting {
   double strikeRate;
   bool out;
 
-  Batting({
+  BattingModel({
     required this.player,
     required this.runs,
     required this.balls,
@@ -21,7 +21,7 @@ class Batting {
     required this.out,
   });
 
-  Batting copyWith({
+  BattingModel copyWith({
     PlayerMiniModel? player,
     int? runs,
     int? balls,
@@ -29,7 +29,7 @@ class Batting {
     int? sixes,
     double? strikeRate,
     bool? out,
-  }) => Batting(
+  }) => BattingModel(
     player: player ?? this.player,
     runs: runs ?? this.runs,
     balls: balls ?? this.balls,
@@ -39,11 +39,12 @@ class Batting {
     out: out ?? this.out,
   );
 
-  factory Batting.fromJson(String str) => Batting.fromMap(json.decode(str));
+  factory BattingModel.fromJson(String str) =>
+      BattingModel.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory Batting.fromMap(Map<String, dynamic> json) => Batting(
+  factory BattingModel.fromMap(Map<String, dynamic> json) => BattingModel(
     player: PlayerMiniModel.fromMap(json["player"]),
     runs: json["runs"],
     balls: json["balls"],

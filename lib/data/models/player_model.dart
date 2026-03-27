@@ -32,18 +32,21 @@ class PlayerModel {
 }
 
 class Stats {
-  BatStats? batting;
-  BallStats? bowling;
+  BattingStats? batting;
+  BowlingStats? bowling;
   MatchStats? match;
 
   Stats({this.batting, this.bowling, this.match});
 
-  Stats copyWith({BatStats? batting, BallStats? bowling, MatchStats? match}) =>
-      Stats(
-        batting: batting ?? this.batting,
-        bowling: bowling ?? this.bowling,
-        match: match ?? this.match,
-      );
+  Stats copyWith({
+    BattingStats? batting,
+    BowlingStats? bowling,
+    MatchStats? match,
+  }) => Stats(
+    batting: batting ?? this.batting,
+    bowling: bowling ?? this.bowling,
+    match: match ?? this.match,
+  );
 
   factory Stats.fromJson(String str) => Stats.fromMap(json.decode(str));
 
@@ -52,11 +55,11 @@ class Stats {
   factory Stats.fromMap(Map<String, dynamic> json) => Stats(
     batting:
         json["batting"] == null
-            ? BatStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0)
-            : BatStats.fromMap(json["batting"]),
+            ? BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0)
+            : BattingStats.fromMap(json["batting"]),
     bowling:
         json["bowling"] == null
-            ? BallStats(
+            ? BowlingStats(
               wickets: 0,
               runs: 0,
               balls: 0,
@@ -64,7 +67,7 @@ class Stats {
               wides: 0,
               noBalls: 0,
             )
-            : BallStats.fromMap(json["bowling"]),
+            : BowlingStats.fromMap(json["bowling"]),
     match:
         json["match"] == null
             ? MatchStats(played: 0, won: 0, superOvers: 0, superOversWon: 0)
@@ -78,22 +81,22 @@ class Stats {
   };
 }
 
-class BatStats {
+class BattingStats {
   int? runs;
   int? balls;
   int? fours;
   int? sixes;
   int? dots;
 
-  BatStats({this.runs, this.balls, this.fours, this.sixes, this.dots});
+  BattingStats({this.runs, this.balls, this.fours, this.sixes, this.dots});
 
-  BatStats copyWith({
+  BattingStats copyWith({
     int? runs,
     int? balls,
     int? fours,
     int? sixes,
     int? dots,
-  }) => BatStats(
+  }) => BattingStats(
     runs: runs ?? this.runs,
     balls: balls ?? this.balls,
     fours: fours ?? this.fours,
@@ -101,11 +104,12 @@ class BatStats {
     dots: dots ?? this.dots,
   );
 
-  factory BatStats.fromJson(String str) => BatStats.fromMap(json.decode(str));
+  factory BattingStats.fromJson(String str) =>
+      BattingStats.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory BatStats.fromMap(Map<String, dynamic> json) => BatStats(
+  factory BattingStats.fromMap(Map<String, dynamic> json) => BattingStats(
     runs: json["runs"],
     balls: json["balls"],
     fours: json["fours"],
@@ -122,7 +126,7 @@ class BatStats {
   };
 }
 
-class BallStats {
+class BowlingStats {
   int? wickets;
   int? runs;
   int? balls;
@@ -130,7 +134,7 @@ class BallStats {
   int? wides;
   int? noBalls;
 
-  BallStats({
+  BowlingStats({
     this.wickets,
     this.runs,
     this.balls,
@@ -139,14 +143,14 @@ class BallStats {
     this.noBalls,
   });
 
-  BallStats copyWith({
+  BowlingStats copyWith({
     int? wickets,
     int? runs,
     int? balls,
     int? dots,
     int? wides,
     int? noBalls,
-  }) => BallStats(
+  }) => BowlingStats(
     wickets: wickets ?? this.wickets,
     runs: runs ?? this.runs,
     balls: balls ?? this.balls,
@@ -155,11 +159,12 @@ class BallStats {
     noBalls: noBalls ?? this.noBalls,
   );
 
-  factory BallStats.fromJson(String str) => BallStats.fromMap(json.decode(str));
+  factory BowlingStats.fromJson(String str) =>
+      BowlingStats.fromMap(json.decode(str));
 
   String toJson() => json.encode(toMap());
 
-  factory BallStats.fromMap(Map<String, dynamic> json) => BallStats(
+  factory BowlingStats.fromMap(Map<String, dynamic> json) => BowlingStats(
     wickets: json["wickets"],
     runs: json["runs"],
     balls: json["balls"],

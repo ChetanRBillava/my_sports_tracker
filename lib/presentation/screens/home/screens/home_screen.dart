@@ -8,12 +8,15 @@ import 'package:my_sports_tracker/data/models/player_model.dart';
 import 'package:my_sports_tracker/data/models/series_model.dart';
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_bloc.dart';
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_state.dart';
+import 'package:my_sports_tracker/presentation/screens/match/logic/match_screen_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
+import '../../../router/AppRouter.dart';
 import '../../../utils/custom_print.dart';
+import '../../match/logic/match_screen_event.dart';
 import '../../match/screens/match_screen.dart';
 import '../logic/home_screen_event.dart';
 import '../widgets/player_tile_widget.dart';
@@ -94,7 +97,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           final match = state.series[reverseIndex];
           return seriesTileWidget(
             index: reverseIndex,
-            onTap: () => makeTeam(series: state.series[reverseIndex]),
+            onTap: () {
+              context.read<MatchScreenBloc>().add(
+                MatchInitEvent(
+                  index: reverseIndex,
+                  series: match,
+                  context: context,
+                ),
+              );
+              if (match.team1.isEmpty) {
+                makeTeam(series: state.series[reverseIndex]);
+              } else {
+                AppRouter.navigateTo(
+                  routeName: AppRouter.match,
+                  context: context,
+                );
+              }
+            },
             onDoubleTap: () {},
             series: match,
           );
@@ -251,27 +270,35 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         overrideTitleTextColor: textColor,
         content: StatefulBuilder(
           builder: (context, setThisState) {
-            return Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children:
-                  players.map<Widget>((player) {
-                    bool isSelected = selectedPlayers.any((p) => p == player);
+            return SizedBox(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: SingleChildScrollView(
+                child: Wrap(
+                  clipBehavior: Clip.hardEdge,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children:
+                      players.map<Widget>((player) {
+                        bool isSelected = selectedPlayers.any(
+                          (p) => p == player,
+                        );
 
-                    return uiUtilityPackage.customChip(
-                      label: player.name,
-                      chipSelected: isSelected,
-                      onSelected: (selected) {
-                        setThisState(() {
-                          if (isSelected) {
-                            selectedPlayers.removeWhere((p) => p == player);
-                          } else {
-                            selectedPlayers.add(player);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
+                        return uiUtilityPackage.customChip(
+                          label: player.name,
+                          chipSelected: isSelected,
+                          onSelected: (selected) {
+                            setThisState(() {
+                              if (isSelected) {
+                                selectedPlayers.removeWhere((p) => p == player);
+                              } else {
+                                selectedPlayers.add(player);
+                              }
+                            });
+                          },
+                        );
+                      }).toList(),
+                ),
+              ),
             );
           },
         ),
@@ -420,10 +447,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   overrideTextColor: textColor,
                                   onTap: () {
                                     Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => MatchScreen(),
+
+                                    context.read<MatchScreenBloc>().add(
+                                      MatchConfirmTeamEvent(
+                                        teams: teams,
+                                        context: context,
                                       ),
                                     );
                                   },

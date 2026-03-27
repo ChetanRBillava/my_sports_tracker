@@ -3,14 +3,28 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
+import '../../../../data/models/inning_model.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import '../../../widgets/batting_statistics_widget.dart';
 import '../../../widgets/bowling_statistics_widget.dart';
 
 class ConcludedScorecardWidget extends StatelessWidget {
-  ConcludedScorecardWidget({super.key});
+  ConcludedScorecardWidget({super.key, required this.inningModel});
+  final InningModel inningModel;
 
   final UiUtilityPackage uiUtilityPackage = UiUtilityPackage();
+
+  String getSR({required int runs, required int balls}) {
+    String strikeRate = ((runs / balls) * 100).toStringAsFixed(2);
+
+    return strikeRate;
+  }
+
+  String getEconomy({required int runs, required int balls}) {
+    String economy = ((runs / balls) * 6).toStringAsFixed(2);
+
+    return economy;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +46,25 @@ class ConcludedScorecardWidget extends StatelessWidget {
             ),
             SizedBox(height: 16),
             ListView.separated(
-              itemCount: 3,
+              itemCount: inningModel.batting.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, playerIndex) {
+              itemBuilder: (context, battingStatsIndex) {
                 return BattingStatisticsWidget(
-                  hideHeading: playerIndex != 0,
-                  player: 'ABC',
-                  runs: '10',
-                  balls: '6',
-                  fours: '1',
-                  sixes: '0',
-                  sr: '123.45',
+                  matchCard: true,
+                  hideHeading: battingStatsIndex != 0,
+                  player: inningModel.batting[battingStatsIndex].player.name,
+                  runs: inningModel.batting[battingStatsIndex].runs.toString(),
+                  balls:
+                      inningModel.batting[battingStatsIndex].balls.toString(),
+                  fours:
+                      inningModel.batting[battingStatsIndex].fours.toString(),
+                  sixes:
+                      inningModel.batting[battingStatsIndex].sixes.toString(),
+                  sr: getSR(
+                    runs: inningModel.batting[battingStatsIndex].runs,
+                    balls: inningModel.batting[battingStatsIndex].balls,
+                  ),
                 );
               },
               separatorBuilder: (context, index) => Divider(),
@@ -63,19 +84,27 @@ class ConcludedScorecardWidget extends StatelessWidget {
             ),
             SizedBox(height: 16),
             ListView.separated(
-              itemCount: 3,
+              itemCount: inningModel.bowling.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemBuilder: (context, playerIndex) {
+              itemBuilder: (context, bowlingStatsIndex) {
                 return BowlingStatisticsWidget(
-                  hideHeading: playerIndex != 0,
-                  player: 'XYZ',
-                  runs: '10',
-                  balls: '6',
-                  wides: '1',
-                  noBalls: '0',
-                  wickets: '0',
-                  economy: '12.45',
+                  matchCard: true,
+                  hideHeading: bowlingStatsIndex != 0,
+                  player: inningModel.bowling[bowlingStatsIndex].player.name,
+                  runs: inningModel.bowling[bowlingStatsIndex].runs.toString(),
+                  balls:
+                      inningModel.bowling[bowlingStatsIndex].balls.toString(),
+                  wides:
+                      inningModel.bowling[bowlingStatsIndex].wides.toString(),
+                  noBalls:
+                      inningModel.bowling[bowlingStatsIndex].noBalls.toString(),
+                  wickets:
+                      inningModel.bowling[bowlingStatsIndex].wickets.toString(),
+                  economy: getEconomy(
+                    runs: inningModel.bowling[bowlingStatsIndex].runs,
+                    balls: inningModel.bowling[bowlingStatsIndex].balls,
+                  ),
                 );
               },
               separatorBuilder: (context, index) => Divider(),

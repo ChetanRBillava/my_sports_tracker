@@ -1,6 +1,8 @@
 import 'package:my_sports_tracker/data/models/player_model.dart';
+import 'package:my_sports_tracker/data/models/series_model.dart';
 
 import '../../../../core/constants/enums.dart';
+import '../../../../data/models/player_mini_model.dart';
 
 abstract class HomeScreenEvent {}
 
@@ -40,4 +42,25 @@ class UpdateSubFlagEvent extends HomeScreenEvent {
   final StatTileEnums flag;
 
   UpdateSubFlagEvent({required this.flag});
+}
+
+class UpdatePlayerStatsEvent extends HomeScreenEvent {
+  final PlayerMiniModel player;
+  final PlayerType type;
+  final String activity;
+  final bool revert;
+
+  UpdatePlayerStatsEvent({
+    required this.player,
+    required this.type,
+    required this.activity,
+    this.revert = false,
+  });
+}
+
+class UpdateAndStoreDataEvent extends HomeScreenEvent {
+  final int seriesId;
+  final SeriesModel series;
+
+  UpdateAndStoreDataEvent({required this.seriesId, required this.series});
 }

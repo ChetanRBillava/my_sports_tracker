@@ -16,12 +16,13 @@ class BattingStatisticsWidget extends StatelessWidget {
     required this.sr,
     this.hideLabel = false,
     this.hideHeading = false,
+    this.matchCard = false,
   });
 
   final UiUtilityPackage uiUtilityPackage = UiUtilityPackage();
 
   String runs, balls, fours, sixes, sr, player;
-  bool hideLabel, hideHeading;
+  bool hideLabel, hideHeading, matchCard;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class BattingStatisticsWidget extends StatelessWidget {
               children: [
                 ///runs
                 SizedBox(
-                  width: 40,
+                  width: matchCard ? 24 : 40,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -78,7 +79,7 @@ class BattingStatisticsWidget extends StatelessWidget {
 
                 ///balls
                 SizedBox(
-                  width: 40,
+                  width: matchCard ? 24 : 40,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -102,7 +103,7 @@ class BattingStatisticsWidget extends StatelessWidget {
 
                 ///4s
                 SizedBox(
-                  width: 28,
+                  width: 24,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -126,7 +127,7 @@ class BattingStatisticsWidget extends StatelessWidget {
 
                 ///6s
                 SizedBox(
-                  width: 28,
+                  width: 24,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

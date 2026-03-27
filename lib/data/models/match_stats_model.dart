@@ -7,15 +7,15 @@ import 'bowling_model.dart';
 
 class MatchStatsModel {
   ManOfTheMatch? manOfTheMatch;
-  Batting? bestBatting;
-  Bowling? bestBowling;
+  BattingModel? bestBatting;
+  BowlingModel? bestBowling;
 
   MatchStatsModel({this.manOfTheMatch, this.bestBatting, this.bestBowling});
 
   MatchStatsModel copyWith({
     ManOfTheMatch? manOfTheMatch,
-    Batting? bestBatting,
-    Bowling? bestBowling,
+    BattingModel? bestBatting,
+    BowlingModel? bestBowling,
   }) => MatchStatsModel(
     manOfTheMatch: manOfTheMatch ?? this.manOfTheMatch,
     bestBatting: bestBatting ?? this.bestBatting,
@@ -35,11 +35,11 @@ class MatchStatsModel {
     bestBatting:
         json["bestBatting"] == null
             ? null
-            : Batting.fromMap(json["bestBatting"]),
+            : BattingModel.fromMap(json["bestBatting"]),
     bestBowling:
         json["bestBowling"] == null
             ? null
-            : Bowling.fromMap(json["bestBowling"]),
+            : BowlingModel.fromMap(json["bestBowling"]),
   );
 
   Map<String, dynamic> toMap() => {
@@ -51,15 +51,15 @@ class MatchStatsModel {
 
 class ManOfTheMatch {
   PlayerMiniModel? player;
-  Batting? batting;
-  Bowling? bowling;
+  BattingModel? batting;
+  BowlingModel? bowling;
 
   ManOfTheMatch({this.player, this.batting, this.bowling});
 
   ManOfTheMatch copyWith({
     PlayerMiniModel? player,
-    Batting? batting,
-    Bowling? bowling,
+    BattingModel? batting,
+    BowlingModel? bowling,
   }) => ManOfTheMatch(
     player: player ?? this.player,
     batting: batting ?? this.batting,
@@ -74,8 +74,10 @@ class ManOfTheMatch {
   factory ManOfTheMatch.fromMap(Map<String, dynamic> json) => ManOfTheMatch(
     player:
         json["player"] == null ? null : PlayerMiniModel.fromMap(json["player"]),
-    batting: json["batting"] == null ? null : Batting.fromMap(json["batting"]),
-    bowling: json["bowling"] == null ? null : Bowling.fromMap(json["bowling"]),
+    batting:
+        json["batting"] == null ? null : BattingModel.fromMap(json["batting"]),
+    bowling:
+        json["bowling"] == null ? null : BowlingModel.fromMap(json["bowling"]),
   );
 
   Map<String, dynamic> toMap() => {

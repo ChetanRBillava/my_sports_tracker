@@ -13,8 +13,8 @@ class InningModel {
   int totalWickets;
   int totalBalls;
   List<Over> overs;
-  List<Batting> batting;
-  List<Bowling> bowling;
+  List<BattingModel> batting;
+  List<BowlingModel> bowling;
   bool? superOver;
 
   InningModel({
@@ -38,8 +38,8 @@ class InningModel {
     int? totalWickets,
     int? totalBalls,
     List<Over>? overs,
-    List<Batting>? batting,
-    List<Bowling>? bowling,
+    List<BattingModel>? batting,
+    List<BowlingModel>? bowling,
     bool? superOver,
   }) => InningModel(
     currentBattingTeam: currentBattingTeam ?? this.currentBattingTeam,
@@ -67,8 +67,12 @@ class InningModel {
     totalWickets: json["totalWickets"],
     totalBalls: json["totalBalls"],
     overs: List<Over>.from(json["overs"].map((x) => Over.fromMap(x))),
-    batting: List<Batting>.from(json["batting"].map((x) => Batting.fromMap(x))),
-    bowling: List<Bowling>.from(json["bowling"].map((x) => Bowling.fromMap(x))),
+    batting: List<BattingModel>.from(
+      json["batting"].map((x) => BattingModel.fromMap(x)),
+    ),
+    bowling: List<BowlingModel>.from(
+      json["bowling"].map((x) => BowlingModel.fromMap(x)),
+    ),
     superOver: json["superOver"],
   );
 

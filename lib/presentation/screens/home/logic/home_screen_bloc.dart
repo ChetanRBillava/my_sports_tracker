@@ -40,6 +40,8 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     on<UpdateSubFlagEvent>(updateSubFlag);
     on<AddPlayerEvent>(addPlayer);
     on<AddSeriesEvent>(addSeries);
+    on<UpdatePlayerStatsEvent>(updatePlayerStats);
+    on<UpdateAndStoreDataEvent>(updateAndStoreData);
 
     add(InitEvent());
   }
@@ -48,19 +50,24 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     emit(state.init());
 
     try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String playerImport = '', seriesImport = '';
+
+      playerImport = prefs.getString('players') ?? '';
+      seriesImport = prefs.getString('series') ?? '';
+
       // Read from assets
-      final String playerImport = await rootBundle.loadString(
-        'assets/imports/player_data.json',
-      );
-      final String seriesImport = await rootBundle.loadString(
-        'assets/imports/series_data.json',
-      );
+      // playerImport = await rootBundle.loadString(
+      //   'assets/imports/player_data.json',
+      // );
+      // seriesImport = await rootBundle.loadString(
+      //   'assets/imports/series_data.json',
+      // );
 
       final List<dynamic> playersData = jsonDecode(playerImport);
       final List<dynamic> seriesData = jsonDecode(seriesImport);
 
       // Save to SharedPreferences
-      final prefs = await SharedPreferences.getInstance();
       await prefs.setString('players', playerImport);
       await prefs.setString('series', seriesImport);
 
@@ -197,11 +204,96 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       );
 
       add(ToggleFilterEvent(index: 0));
+
+      updateGameStats(emit);
     } catch (e) {
       customPrint.print(
         message: 'Exception caught while loading players from assets: $e',
       );
     }
+  }
+
+  void updateGameStats(Emitter<HomeScreenState> emit) {
+    List<PlayerModel> players = state.players.map((p) => p.copyWith()).toList();
+    List<SeriesModel> series = state.series.map((p) => p.copyWith()).toList();
+
+    for (var players in players) {
+      players.stats = Stats(
+        batting: BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
+        bowling: BowlingStats(wickets: 0, runs: 0, dots: 0, balls: 0, wides: 0),
+        match: MatchStats(
+          played: 0,
+          won: 0,
+          superOvers: 0,
+          superOversWon: 0,
+          motm: 0,
+        ),
+      );
+    }
+
+    for (var s in series) {
+      for (var m in s.matches) {
+        for (var i in m.innings) {
+          for (var b in i.batting) {
+            for (var p in players) {
+              if (b.player.id == p.id) {
+                p.stats?.batting?.runs = (p.stats?.batting?.runs ?? 0) + b.runs;
+                p.stats?.batting?.balls =
+                    (p.stats?.batting?.balls ?? 0) + b.balls;
+                p.stats?.batting?.sixes =
+                    (p.stats?.batting?.sixes ?? 0) + b.sixes;
+                p.stats?.batting?.fours =
+                    (p.stats?.batting?.fours ?? 0) + b.fours;
+              }
+            }
+          }
+          for (var b in i.bowling) {
+            for (var p in players) {
+              if (b.player.id == p.id) {
+                p.stats?.bowling?.wickets =
+                    (p.stats?.bowling?.wickets ?? 0) + b.wickets;
+                p.stats?.bowling?.balls =
+                    (p.stats?.bowling?.balls ?? 0) + b.balls;
+                p.stats?.bowling?.runs = (p.stats?.bowling?.runs ?? 0) + b.runs;
+                p.stats?.bowling?.wides =
+                    (p.stats?.bowling?.wides ?? 0) + b.wides;
+                p.stats?.bowling?.noBalls =
+                    (p.stats?.bowling?.noBalls ?? 0) + b.noBalls;
+              }
+            }
+          }
+        }
+        if (m.wonBy != 999) {
+          for (var t in m.team1) {
+            for (var p in players) {
+              if (t.id == p.id) {
+                p.stats?.match?.played = (p.stats?.match?.played ?? 0) + 1;
+                if (m.wonBy == 0) {
+                  p.stats?.match?.won = (p.stats?.match?.won ?? 0) + 1;
+                }
+              }
+            }
+          }
+          for (var t in m.team2) {
+            for (var p in players) {
+              if (t.id == p.id) {
+                p.stats?.match?.played = (p.stats?.match?.played ?? 0) + 1;
+                if (m.wonBy == 1) {
+                  p.stats?.match?.won = (p.stats?.match?.won ?? 0) + 1;
+                }
+              }
+            }
+          }
+          for (var p in players) {
+            if (m.stats?.manOfTheMatch?.player?.id == p.id) {
+              p.stats?.match?.motm = (p.stats?.match?.motm ?? 0) + 1;
+            }
+          }
+        }
+      }
+    }
+
+    emit(state.copyWith(series: series, players: players));
   }
 
   String getMonthName(int month) =>
@@ -230,8 +322,14 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     if (event.index != 0) {
       for (var player in tempPlayers) {
         player.stats = Stats(
-          batting: BatStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
-          bowling: BallStats(wickets: 0, runs: 0, dots: 0, balls: 0, wides: 0),
+          batting: BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
+          bowling: BowlingStats(
+            wickets: 0,
+            runs: 0,
+            dots: 0,
+            balls: 0,
+            wides: 0,
+          ),
           match: MatchStats(
             played: 0,
             won: 0,
@@ -456,8 +554,14 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         id: generatedId,
         name: event.name,
         stats: Stats(
-          batting: BatStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
-          bowling: BallStats(wickets: 0, runs: 0, dots: 0, balls: 0, wides: 0),
+          batting: BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
+          bowling: BowlingStats(
+            wickets: 0,
+            runs: 0,
+            dots: 0,
+            balls: 0,
+            wides: 0,
+          ),
           match: MatchStats(
             played: 0,
             won: 0,
@@ -470,6 +574,10 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     );
 
     emit(state.copyWith(players: tempPlayers));
+  }
+
+  Future<List<PlayerModel>> getPlayers() async {
+    return state.players;
   }
 
   void addSeries(AddSeriesEvent event, Emitter<HomeScreenState> emit) {
@@ -500,5 +608,171 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     );
 
     emit(state.copyWith(series: tempSeries));
+  }
+
+  Future<void> updatePlayerStats(
+    UpdatePlayerStatsEvent event,
+    Emitter<HomeScreenState> emit,
+  ) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<PlayerModel> players = state.players;
+
+    int playerIndex = players.indexWhere((p) => p.id == event.player.id);
+
+    if (event.type == PlayerType.batter) {
+      if (['0', '2', '4', '6'].contains(event.activity)) {
+        if (event.revert) {
+          players[playerIndex].stats?.batting?.runs =
+              (players[playerIndex].stats?.batting?.runs ?? 0) -
+              int.parse(event.activity);
+          players[playerIndex].stats?.batting?.balls =
+              (players[playerIndex].stats?.batting?.balls ?? 0) - 1;
+
+          if (event.activity == '0') {
+            players[playerIndex].stats?.batting?.dots =
+                (players[playerIndex].stats?.batting?.dots ?? 0) - 1;
+          } else if (event.activity == '4') {
+            players[playerIndex].stats?.batting?.fours =
+                (players[playerIndex].stats?.batting?.fours ?? 0) - 1;
+          } else if (event.activity == '6') {
+            players[playerIndex].stats?.batting?.sixes =
+                (players[playerIndex].stats?.batting?.sixes ?? 0) - 1;
+          }
+        } else {
+          players[playerIndex].stats?.batting?.runs =
+              (players[playerIndex].stats?.batting?.runs ?? 0) +
+              int.parse(event.activity);
+          players[playerIndex].stats?.batting?.balls =
+              (players[playerIndex].stats?.batting?.balls ?? 0) + 1;
+
+          if (event.activity == '0') {
+            players[playerIndex].stats?.batting?.dots =
+                (players[playerIndex].stats?.batting?.dots ?? 0) + 1;
+          } else if (event.activity == '4') {
+            players[playerIndex].stats?.batting?.fours =
+                (players[playerIndex].stats?.batting?.fours ?? 0) + 1;
+          } else if (event.activity == '6') {
+            players[playerIndex].stats?.batting?.sixes =
+                (players[playerIndex].stats?.batting?.sixes ?? 0) + 1;
+          }
+        }
+      } else if (event.activity.contains('NB')) {
+        List<String> scores = event.activity.split('+');
+        int score = int.parse(scores[1]);
+
+        if (event.revert) {
+          players[playerIndex].stats?.batting?.runs =
+              (players[playerIndex].stats?.batting?.runs ?? 0) - score;
+
+          if (scores[1] == '4') {
+            players[playerIndex].stats?.batting?.fours =
+                (players[playerIndex].stats?.batting?.fours ?? 0) - 1;
+          } else if (scores[1] == '6') {
+            players[playerIndex].stats?.batting?.sixes =
+                (players[playerIndex].stats?.batting?.sixes ?? 0) - 1;
+          }
+        } else {
+          players[playerIndex].stats?.batting?.runs =
+              (players[playerIndex].stats?.batting?.runs ?? 0) + score;
+
+          if (scores[1] == '4') {
+            players[playerIndex].stats?.batting?.fours =
+                (players[playerIndex].stats?.batting?.fours ?? 0) + 1;
+          } else if (scores[1] == '6') {
+            players[playerIndex].stats?.batting?.sixes =
+                (players[playerIndex].stats?.batting?.sixes ?? 0) + 1;
+          }
+        }
+      } else {
+        players[playerIndex].stats?.batting?.balls =
+            (players[playerIndex].stats?.batting?.balls ?? 0) + 1;
+      }
+    } else {
+      if (['0', '2', '4', '6'].contains(event.activity)) {
+        if (event.revert) {
+          if (event.activity == '0') {
+            players[playerIndex].stats?.bowling?.dots =
+                (players[playerIndex].stats?.bowling?.dots ?? 0) - 1;
+          } else {
+            players[playerIndex].stats?.bowling?.runs =
+                (players[playerIndex].stats?.bowling?.runs ?? 0) -
+                int.parse(event.activity);
+          }
+
+          players[playerIndex].stats?.bowling?.balls =
+              (players[playerIndex].stats?.bowling?.balls ?? 0) - 1;
+        } else {
+          if (event.activity == '0') {
+            players[playerIndex].stats?.bowling?.dots =
+                (players[playerIndex].stats?.bowling?.dots ?? 0) + 1;
+          } else {
+            players[playerIndex].stats?.bowling?.runs =
+                (players[playerIndex].stats?.bowling?.runs ?? 0) +
+                int.parse(event.activity);
+          }
+
+          players[playerIndex].stats?.bowling?.balls =
+              (players[playerIndex].stats?.bowling?.balls ?? 0) + 1;
+        }
+      } else if (event.activity == 'WD') {
+        if (event.revert) {
+          players[playerIndex].stats?.bowling?.runs =
+              (players[playerIndex].stats?.bowling?.runs ?? 0) - 1;
+          players[playerIndex].stats?.bowling?.wides =
+              (players[playerIndex].stats?.bowling?.wides ?? 0) - 1;
+        } else {
+          players[playerIndex].stats?.bowling?.runs =
+              (players[playerIndex].stats?.bowling?.runs ?? 0) + 1;
+          players[playerIndex].stats?.bowling?.wides =
+              (players[playerIndex].stats?.bowling?.wides ?? 0) + 1;
+        }
+      } else if (event.activity.contains('NB')) {
+        List<String> scores = event.activity.split('+');
+        int score = int.parse(scores[1]);
+
+        if (event.revert) {
+          players[playerIndex].stats?.bowling?.runs =
+              (players[playerIndex].stats?.bowling?.runs ?? 0) - score + 1;
+
+          players[playerIndex].stats?.bowling?.noBalls =
+              (players[playerIndex].stats?.bowling?.noBalls ?? 0) - 1;
+        } else {
+          players[playerIndex].stats?.bowling?.runs =
+              (players[playerIndex].stats?.bowling?.runs ?? 0) + score + 1;
+
+          players[playerIndex].stats?.bowling?.noBalls =
+              (players[playerIndex].stats?.bowling?.noBalls ?? 0) + 1;
+        }
+      } else {
+        players[playerIndex].stats?.bowling?.wickets =
+            (players[playerIndex].stats?.bowling?.wickets ?? 0) + 1;
+        players[playerIndex].stats?.bowling?.balls =
+            (players[playerIndex].stats?.bowling?.balls ?? 0) + 1;
+      }
+    }
+
+    emit(state.copyWith(players: players));
+    prefs.setString(
+      'players',
+      jsonEncode(players.map((p) => p.toMap()).toList()),
+    );
+  }
+
+  Future<void> updateAndStoreData(
+    UpdateAndStoreDataEvent event,
+    Emitter<HomeScreenState> emit,
+  ) async {
+    customPrint.print(message: 'Updating data');
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<SeriesModel> series = state.series;
+
+    series[event.seriesId] = event.series;
+
+    emit(state.copyWith(series: series));
+
+    prefs.setString(
+      'series',
+      jsonEncode(series.map((p) => p.toMap()).toList()),
+    );
   }
 }

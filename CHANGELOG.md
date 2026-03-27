@@ -27,10 +27,24 @@ Here we write the updates of future releases.
 
 
 
+## [1.0.3] - 27-03-2026
+
+### Added
+- Bloc logics for Match Screen
+- Router file
+- Screenshot Utility
+- screenshot, path_provider and share_plus plugins
+
+### Changed
+- "Get color" cubit calls in match screen with more simplified and optimal methods.
+- Statistics tile parameter with actual model
+
+
+
 ## [1.0.2] - 28-02-2026
 
 ### Added
-- Bloc  logics for Home Screen
+- Bloc logics for Home Screen
 - Player and Series data import
 - Main models
 
