@@ -56,7 +56,7 @@ Widget statisticsTileWidget({
       return BlocBuilder<HomeScreenBloc, HomeScreenState>(
         builder: (context, homeScreenState) {
           return Screenshot(
-            controller: screenshotController.getController(
+            controller: context.read<HomeScreenBloc>().getScreenshotController(
               statisticsTileModel.title.toLowerCase().replaceAll(' ', '_'),
             ),
             child: uiUtilityPackage.customCard(
@@ -71,6 +71,14 @@ Widget statisticsTileWidget({
                     ),
                   ),
               onLongPress: () {
+                ScreenshotController controller = context
+                    .read<HomeScreenBloc>()
+                    .getScreenshotController(
+                      statisticsTileModel.title.toLowerCase().replaceAll(
+                        ' ',
+                        '_',
+                      ),
+                    );
                 screenshotController.captureScreenshot(
                   displayText:
                       '${homeScreenState.statFilters[homeScreenState.selectedFilterIndex].year} ${homeScreenState.statFilters[homeScreenState.selectedFilterIndex].monthName} - ${statisticsTileModel.title}',
@@ -78,6 +86,7 @@ Widget statisticsTileWidget({
                     ' ',
                     '_',
                   ),
+                  controller: controller,
                 );
               },
               widget: SizedBox(
@@ -102,11 +111,13 @@ Widget statisticsTileWidget({
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, statIndex) {
                             return Screenshot(
-                              controller: screenshotController.getController(
-                                statisticsTileModel.stats![statIndex].title!
-                                    .toLowerCase()
-                                    .replaceAll(' ', '_'),
-                              ),
+                              controller: context
+                                  .read<HomeScreenBloc>()
+                                  .getScreenshotController(
+                                    statisticsTileModel.stats![statIndex].title!
+                                        .toLowerCase()
+                                        .replaceAll(' ', '_'),
+                                  ),
                               child: uiUtilityPackage.customCard(
                                 color:
                                     appThemeState
@@ -122,6 +133,15 @@ Widget statisticsTileWidget({
                                       ),
                                     ),
                                 onLongPress: () {
+                                  ScreenshotController controller = context
+                                      .read<HomeScreenBloc>()
+                                      .getScreenshotController(
+                                        statisticsTileModel
+                                            .stats![statIndex]
+                                            .title!
+                                            .toLowerCase()
+                                            .replaceAll(' ', '_'),
+                                      );
                                   screenshotController.captureScreenshot(
                                     displayText:
                                         '${homeScreenState.statFilters[homeScreenState.selectedFilterIndex].year} ${homeScreenState.statFilters[homeScreenState.selectedFilterIndex].monthName} - ${statisticsTileModel.stats![statIndex].title!}',
@@ -130,6 +150,7 @@ Widget statisticsTileWidget({
                                         .title!
                                         .toLowerCase()
                                         .replaceAll(' ', '_'),
+                                    controller: controller,
                                   );
                                 },
                                 widget: Container(

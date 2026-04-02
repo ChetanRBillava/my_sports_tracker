@@ -1,16 +1,13 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:my_sports_tracker/presentation/utils/custom_print.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ScreenshotControllers {
-  final Map<String, ScreenshotController> _controllers = {};
-
-  ScreenshotController getController(String key) {
-    return _controllers.putIfAbsent(key, () => ScreenshotController());
-  }
+  CustomPrint customPrint = CustomPrint();
 
   Uint8List? imageBytes;
 
@@ -18,9 +15,10 @@ class ScreenshotControllers {
     required String displayText,
     required String key,
     bool isPlayerStat = false,
+    required ScreenshotController controller,
   }) async {
     try {
-      final image = await getController(key).capture();
+      final image = await controller.capture();
 
       imageBytes = image;
 
@@ -31,7 +29,9 @@ class ScreenshotControllers {
         // '${isPlayerStat ? '' : filters[selectedFilter].monthName?.toUpperCase()} ${key.replaceAll('_', ' ').toUpperCase()}',
       );
     } catch (e) {
-      print('Error: $e');
+      customPrint.print(
+        message: 'Exception caught in captureScreenshot: $key - $e',
+      );
     }
   }
 

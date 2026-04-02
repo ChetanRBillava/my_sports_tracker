@@ -2,7 +2,7 @@ name: my_sports_tracker
 description: "A new Flutter project for sports tracking."
 
 publish_to: 'none'
-version: 1.0.3+4
+version: 1.0.4+5
 
 environment:
   sdk: ^3.7.2
@@ -20,6 +20,7 @@ dependencies:
   screenshot:
   path_provider:
   share_plus:
+  file_picker:
 
 dev_dependencies:
   flutter_test:
@@ -29,6 +30,6 @@ dev_dependencies:
 
 flutter:
   assets:
-    - assets/imports/
+    - assets/
 
   uses-material-design: true

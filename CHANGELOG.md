@@ -27,6 +27,22 @@ Here we write the updates of future releases.
 
 
 
+## [1.0.4] - 02-04-2026
+
+### Added
+- Settings screen for import/export data UI
+- Data Import/Export logic in "data_transfer_service.dart" file
+- Screenshot controller map inside Home Screen State
+
+### Changed
+- Screenshot Controller logic, moved it to Home Page Bloc
+- Release apk name config in "android/app/build.gradle.kts" file
+
+### Removed
+- Hardcode Json data files for player and series data
+
+
+
 ## [1.0.3] - 27-03-2026
 
 ### Added

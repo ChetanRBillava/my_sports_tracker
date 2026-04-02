@@ -37,6 +37,13 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
+    applicationVariants.all {
+        outputs.all {
+            val name = "My Sports Tracker V1.0.4.apk"
+            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = name
+        }
+    }
 }
 
 flutter {

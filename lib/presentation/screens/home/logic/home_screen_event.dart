@@ -8,6 +8,13 @@ abstract class HomeScreenEvent {}
 
 class InitEvent extends HomeScreenEvent {}
 
+class ImportDataEvent extends HomeScreenEvent {
+  String importString;
+  bool isPlayerData;
+
+  ImportDataEvent({required this.importString, required this.isPlayerData});
+}
+
 class ToggleBottomBarEvent extends HomeScreenEvent {
   final int index;
 

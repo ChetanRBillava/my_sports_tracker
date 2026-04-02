@@ -1,4 +1,5 @@
 import 'package:my_sports_tracker/data/models/series_model.dart';
+import 'package:screenshot/screenshot.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../data/models/player_model.dart';
@@ -13,6 +14,7 @@ class HomeScreenState {
   final List<StatisticsTileModel> statTiles;
   final Map<String, bool> mainStatTileFlags;
   final Map<StatTileEnums, bool> subStatTileFlags;
+  final Map<String, ScreenshotController> screenshotControllers;
 
   const HomeScreenState({
     required this.selectedBottomBarIndex,
@@ -23,6 +25,7 @@ class HomeScreenState {
     required this.statTiles,
     required this.mainStatTileFlags,
     required this.subStatTileFlags,
+    this.screenshotControllers = const {},
   });
 
   HomeScreenState init() {
@@ -33,8 +36,9 @@ class HomeScreenState {
       series: [],
       statFilters: [],
       statTiles: [],
-        mainStatTileFlags:{},
-        subStatTileFlags:{},
+      mainStatTileFlags: {},
+      subStatTileFlags: {},
+      screenshotControllers: {},
     );
   }
 
@@ -47,6 +51,7 @@ class HomeScreenState {
     List<StatisticsTileModel>? statTiles,
     Map<String, bool>? mainStatTileFlags,
     Map<StatTileEnums, bool>? subStatTileFlags,
+    Map<String, ScreenshotController>? screenshotControllers,
   }) {
     return HomeScreenState(
       selectedBottomBarIndex:
@@ -58,6 +63,8 @@ class HomeScreenState {
       statTiles: statTiles ?? this.statTiles,
       mainStatTileFlags: mainStatTileFlags ?? this.mainStatTileFlags,
       subStatTileFlags: subStatTileFlags ?? this.subStatTileFlags,
+      screenshotControllers:
+          screenshotControllers ?? this.screenshotControllers,
     );
   }
 
@@ -67,6 +74,9 @@ class HomeScreenState {
     players,
     series,
     statFilters,
-    statTiles,mainStatTileFlags,subStatTileFlags,
+    statTiles,
+    mainStatTileFlags,
+    subStatTileFlags,
+    screenshotControllers,
   ];
 }

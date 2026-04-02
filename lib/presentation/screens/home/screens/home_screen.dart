@@ -89,36 +89,38 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
 
       ///Series Widgets
-      ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: state.series.length,
-        itemBuilder: (context, index) {
-          final reverseIndex = state.series.length - 1 - index;
-          final match = state.series[reverseIndex];
-          return seriesTileWidget(
-            index: reverseIndex,
-            onTap: () {
-              context.read<MatchScreenBloc>().add(
-                MatchInitEvent(
-                  index: reverseIndex,
-                  series: match,
-                  context: context,
-                ),
+      state.series.isEmpty
+          ? emptyStateWidget(message: 'No Series Added', textColor: textColor)
+          : ListView.builder(
+            padding: EdgeInsets.all(16),
+            itemCount: state.series.length,
+            itemBuilder: (context, index) {
+              final reverseIndex = state.series.length - 1 - index;
+              final match = state.series[reverseIndex];
+              return seriesTileWidget(
+                index: reverseIndex,
+                onTap: () {
+                  context.read<MatchScreenBloc>().add(
+                    MatchInitEvent(
+                      index: reverseIndex,
+                      series: match,
+                      context: context,
+                    ),
+                  );
+                  if (match.team1.isEmpty) {
+                    makeTeam(series: state.series[reverseIndex]);
+                  } else {
+                    AppRouter.navigateTo(
+                      routeName: AppRouter.match,
+                      context: context,
+                    );
+                  }
+                },
+                onDoubleTap: () {},
+                series: match,
               );
-              if (match.team1.isEmpty) {
-                makeTeam(series: state.series[reverseIndex]);
-              } else {
-                AppRouter.navigateTo(
-                  routeName: AppRouter.match,
-                  context: context,
-                );
-              }
             },
-            onDoubleTap: () {},
-            series: match,
-          );
-        },
-      ),
+          ),
 
       ///Statistics Widgets
       ListView(
@@ -504,6 +506,18 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   overrideColor: appThemeState.themeClass.white,
                   fontWeight: FontWeight.bold,
                 ),
+                actions: [
+                  uiUtilityPackage.customButton(
+                    onTap:
+                        () => AppRouter.navigateTo(
+                          routeName: AppRouter.settings,
+                          context: context,
+                        ),
+                    type: ButtonType.icon,
+                    icon: Icons.settings,
+                    iconColor: appThemeState.themeClass.white,
+                  ),
+                ],
               ),
               body:
                   isLoading

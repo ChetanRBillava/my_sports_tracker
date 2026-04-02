@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:my_sports_tracker/core/constants/enums.dart';
 import 'package:my_sports_tracker/data/models/player_model.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
@@ -34,6 +35,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         ),
       ) {
     on<InitEvent>(_init);
+    on<ImportDataEvent>(importData);
     on<ToggleBottomBarEvent>(toggleBottomBar);
     on<ToggleFilterEvent>(toggleFilter);
     on<UpdateMainFlagEvent>(updateMainFlag);
@@ -52,24 +54,13 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String playerImport = '', seriesImport = '';
+      final Map<String, ScreenshotController> screenshotControllers = {};
 
       playerImport = prefs.getString('players') ?? '';
       seriesImport = prefs.getString('series') ?? '';
 
-      // Read from assets
-      // playerImport = await rootBundle.loadString(
-      //   'assets/imports/player_data.json',
-      // );
-      // seriesImport = await rootBundle.loadString(
-      //   'assets/imports/series_data.json',
-      // );
-
       final List<dynamic> playersData = jsonDecode(playerImport);
       final List<dynamic> seriesData = jsonDecode(seriesImport);
-
-      // Save to SharedPreferences
-      await prefs.setString('players', playerImport);
-      await prefs.setString('series', seriesImport);
 
       List<PlayerModel> tempPlayers = [];
       // Update app state
@@ -176,7 +167,15 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         if (tempMainFlags.isEmpty) {
           val = true;
         }
-        tempMainFlags[s.title.toLowerCase().replaceAll(' ', '_')] = val;
+        String key = s.title.toLowerCase().replaceAll(' ', '_');
+        tempMainFlags[key] = val;
+        screenshotControllers[key] = ScreenshotController();
+        customPrint.print(message: 'Flag key: $key');
+        s.stats?.forEach((stat) {
+          String subKey = stat.title?.toLowerCase().replaceAll(' ', '_') ?? '';
+          screenshotControllers[subKey] = ScreenshotController();
+          customPrint.print(message: 'Sub Flag key: $subKey');
+        });
       }
 
       Map<StatTileEnums, bool> tempSubFlags = {};
@@ -200,6 +199,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
           statTiles: stats,
           subStatTileFlags: tempSubFlags,
           mainStatTileFlags: tempMainFlags,
+          screenshotControllers: screenshotControllers,
         ),
       );
 
@@ -213,87 +213,273 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     }
   }
 
-  void updateGameStats(Emitter<HomeScreenState> emit) {
-    List<PlayerModel> players = state.players.map((p) => p.copyWith()).toList();
-    List<SeriesModel> series = state.series.map((p) => p.copyWith()).toList();
+  ScreenshotController getScreenshotController(String key) {
+    final Map<String, ScreenshotController> screenshotControllers =
+        state.screenshotControllers;
+    customPrint.print(
+      message: 'Screenshot controller for $key: ${screenshotControllers[key]}',
+    );
+    return screenshotControllers[key] ?? ScreenshotController();
+  }
 
-    for (var players in players) {
-      players.stats = Stats(
-        batting: BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
-        bowling: BowlingStats(wickets: 0, runs: 0, dots: 0, balls: 0, wides: 0),
-        match: MatchStats(
-          played: 0,
-          won: 0,
-          superOvers: 0,
-          superOversWon: 0,
-          motm: 0,
-        ),
-      );
-    }
+  void importData(ImportDataEvent event, Emitter<HomeScreenState> emit) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    try {
+      final List<dynamic> importData = jsonDecode(event.importString);
 
-    for (var s in series) {
-      for (var m in s.matches) {
-        for (var i in m.innings) {
-          for (var b in i.batting) {
-            for (var p in players) {
-              if (b.player.id == p.id) {
-                p.stats?.batting?.runs = (p.stats?.batting?.runs ?? 0) + b.runs;
-                p.stats?.batting?.balls =
-                    (p.stats?.batting?.balls ?? 0) + b.balls;
-                p.stats?.batting?.sixes =
-                    (p.stats?.batting?.sixes ?? 0) + b.sixes;
-                p.stats?.batting?.fours =
-                    (p.stats?.batting?.fours ?? 0) + b.fours;
-              }
-            }
+      if (event.isPlayerData) {
+        List<PlayerModel> tempPlayers = [];
+        // Update app state
+        tempPlayers =
+            importData.map((json) => PlayerModel.fromMap(json)).toList();
+        customPrint.print(
+          message: '✅ Loaded ${importData.length} players from import!',
+        );
+
+        ///Setup Statistics
+        List<StatisticsTileModel> stats = [
+          StatisticsTileModel(
+            title: 'Match Statistics',
+            stats: [
+              Stat(
+                title: 'Most Wins',
+                type: StatTileEnums.wins,
+                players: tempPlayers.toList(),
+              ),
+              Stat(
+                title: 'Most MOTM',
+                type: StatTileEnums.motm,
+                players: tempPlayers.toList(),
+              ),
+            ],
+          ),
+          StatisticsTileModel(
+            title: 'Batting Statistics',
+            stats: [
+              Stat(
+                title: 'Most Runs',
+                type: StatTileEnums.runs,
+                players: tempPlayers.toList(),
+              ),
+              Stat(
+                title: 'Most 6s',
+                type: StatTileEnums.sixes,
+                players: tempPlayers.toList(),
+              ),
+              Stat(
+                title: 'Most 4s',
+                type: StatTileEnums.fours,
+                players: tempPlayers.toList(),
+              ),
+              Stat(
+                title: 'Best Strike Rate',
+                type: StatTileEnums.sr,
+
+                players: tempPlayers.toList(),
+              ),
+            ],
+          ),
+          StatisticsTileModel(
+            title: 'Bowling Statistics',
+            stats: [
+              Stat(
+                title: 'Most Wickets',
+                type: StatTileEnums.wickets,
+
+                players: tempPlayers.toList(),
+              ),
+              Stat(
+                title: 'Best Economy',
+                type: StatTileEnums.economy,
+
+                players: tempPlayers.toList(),
+              ),
+            ],
+          ),
+        ];
+
+        Map<String, bool> tempMainFlags = {};
+        for (var s in stats) {
+          bool val = false;
+          if (tempMainFlags.isEmpty) {
+            val = true;
           }
-          for (var b in i.bowling) {
-            for (var p in players) {
-              if (b.player.id == p.id) {
-                p.stats?.bowling?.wickets =
-                    (p.stats?.bowling?.wickets ?? 0) + b.wickets;
-                p.stats?.bowling?.balls =
-                    (p.stats?.bowling?.balls ?? 0) + b.balls;
-                p.stats?.bowling?.runs = (p.stats?.bowling?.runs ?? 0) + b.runs;
-                p.stats?.bowling?.wides =
-                    (p.stats?.bowling?.wides ?? 0) + b.wides;
-                p.stats?.bowling?.noBalls =
-                    (p.stats?.bowling?.noBalls ?? 0) + b.noBalls;
-              }
-            }
+          tempMainFlags[s.title.toLowerCase().replaceAll(' ', '_')] = val;
+        }
+
+        Map<StatTileEnums, bool> tempSubFlags = {};
+        for (var flag in StatTileEnums.values) {
+          if (flag == StatTileEnums.wins ||
+              flag == StatTileEnums.runs ||
+              flag == StatTileEnums.wickets) {
+            tempSubFlags[flag] = true;
+          } else {
+            tempSubFlags[flag] = false;
           }
         }
-        if (m.wonBy != 999) {
-          for (var t in m.team1) {
-            for (var p in players) {
-              if (t.id == p.id) {
-                p.stats?.match?.played = (p.stats?.match?.played ?? 0) + 1;
-                if (m.wonBy == 0) {
-                  p.stats?.match?.won = (p.stats?.match?.won ?? 0) + 1;
+        // Save to SharedPreferences
+        await prefs.setString('players', event.importString);
+
+        emit(
+          state.copyWith(
+            players: tempPlayers,
+            statTiles: stats,
+            subStatTileFlags: tempSubFlags,
+            mainStatTileFlags: tempMainFlags,
+          ),
+        );
+      } else {
+        List<SeriesModel> tempSeries = [];
+        // Update app state
+        tempSeries =
+            importData.map((json) => SeriesModel.fromMap(json)).toList();
+        customPrint.print(
+          message: '✅ Loaded ${importData.length} series from import!',
+        );
+
+        ///Setup Filters
+        List<StatFilterModel> filters = [
+          StatFilterModel(
+            month: '0',
+            monthName: 'All time Stats',
+            year: '2026',
+          ),
+        ];
+        for (var s in tempSeries) {
+          List<String> dates = s.date.split('-');
+          customPrint.print(
+            message: 'Getting month name: ${getMonthName(int.parse(dates[1]))}',
+          );
+
+          if (filters[filters.length - 1].month != dates[1]) {
+            filters.add(
+              StatFilterModel(
+                month: dates[1],
+                monthName: getMonthName(int.parse(dates[1])),
+                year: dates[0],
+              ),
+            );
+          }
+          customPrint.print(message: 'Filters: $filters');
+        }
+        // Save to SharedPreferences
+        await prefs.setString('series', event.importString);
+
+        emit(
+          state.copyWith(
+            series: tempSeries,
+            statFilters: filters,
+            selectedFilterIndex: 0,
+          ),
+        );
+
+        add(ToggleFilterEvent(index: 0));
+      }
+
+      updateGameStats(emit);
+    } catch (e) {
+      customPrint.print(
+        message: 'Exception caught while loading data from import: $e',
+      );
+    }
+  }
+
+  void updateGameStats(Emitter<HomeScreenState> emit) {
+    try {
+      List<PlayerModel> players =
+          state.players.map((p) => p.copyWith()).toList();
+      List<SeriesModel> series = state.series.map((p) => p.copyWith()).toList();
+
+      for (var players in players) {
+        players.stats = Stats(
+          batting: BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
+          bowling: BowlingStats(
+            wickets: 0,
+            runs: 0,
+            dots: 0,
+            balls: 0,
+            wides: 0,
+          ),
+          match: MatchStats(
+            played: 0,
+            won: 0,
+            superOvers: 0,
+            superOversWon: 0,
+            motm: 0,
+          ),
+        );
+      }
+
+      for (var s in series) {
+        for (var m in s.matches) {
+          for (var i in m.innings) {
+            for (var b in i.batting) {
+              for (var p in players) {
+                if (b.player.id == p.id) {
+                  p.stats?.batting?.runs =
+                      (p.stats?.batting?.runs ?? 0) + b.runs;
+                  p.stats?.batting?.balls =
+                      (p.stats?.batting?.balls ?? 0) + b.balls;
+                  p.stats?.batting?.sixes =
+                      (p.stats?.batting?.sixes ?? 0) + b.sixes;
+                  p.stats?.batting?.fours =
+                      (p.stats?.batting?.fours ?? 0) + b.fours;
+                }
+              }
+            }
+            for (var b in i.bowling) {
+              for (var p in players) {
+                if (b.player.id == p.id) {
+                  p.stats?.bowling?.wickets =
+                      (p.stats?.bowling?.wickets ?? 0) + b.wickets;
+                  p.stats?.bowling?.balls =
+                      (p.stats?.bowling?.balls ?? 0) + b.balls;
+                  p.stats?.bowling?.runs =
+                      (p.stats?.bowling?.runs ?? 0) + b.runs;
+                  p.stats?.bowling?.wides =
+                      (p.stats?.bowling?.wides ?? 0) + b.wides;
+                  p.stats?.bowling?.noBalls =
+                      (p.stats?.bowling?.noBalls ?? 0) + b.noBalls;
                 }
               }
             }
           }
-          for (var t in m.team2) {
-            for (var p in players) {
-              if (t.id == p.id) {
-                p.stats?.match?.played = (p.stats?.match?.played ?? 0) + 1;
-                if (m.wonBy == 1) {
-                  p.stats?.match?.won = (p.stats?.match?.won ?? 0) + 1;
+          if (m.wonBy != 999) {
+            for (var t in m.team1) {
+              for (var p in players) {
+                if (t.id == p.id) {
+                  p.stats?.match?.played = (p.stats?.match?.played ?? 0) + 1;
+                  if (m.wonBy == 0) {
+                    p.stats?.match?.won = (p.stats?.match?.won ?? 0) + 1;
+                  }
                 }
               }
             }
-          }
-          for (var p in players) {
-            if (m.stats?.manOfTheMatch?.player?.id == p.id) {
-              p.stats?.match?.motm = (p.stats?.match?.motm ?? 0) + 1;
+            for (var t in m.team2) {
+              for (var p in players) {
+                if (t.id == p.id) {
+                  p.stats?.match?.played = (p.stats?.match?.played ?? 0) + 1;
+                  if (m.wonBy == 1) {
+                    p.stats?.match?.won = (p.stats?.match?.won ?? 0) + 1;
+                  }
+                }
+              }
+            }
+            for (var p in players) {
+              if (m.stats?.manOfTheMatch?.player?.id == p.id) {
+                p.stats?.match?.motm = (p.stats?.match?.motm ?? 0) + 1;
+              }
             }
           }
         }
       }
-    }
 
-    emit(state.copyWith(series: series, players: players));
+      emit(state.copyWith(series: series, players: players));
+    } catch (e) {
+      customPrint.print(
+        message: 'Exception caught while updating game stats: $e',
+      );
+    }
   }
 
   String getMonthName(int month) =>
