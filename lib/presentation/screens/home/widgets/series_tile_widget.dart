@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_sports_tracker/data/models/series_model.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
@@ -7,6 +8,7 @@ import '../../../../logics/cubits/app_theme_cubit.dart';
 
 UiUtilityPackage uiUtilityPackage = UiUtilityPackage();
 Widget seriesTileWidget({
+  required SeriesModel series,
   required int index,
   required Function() onTap,
   required Function() onDoubleTap,
@@ -36,7 +38,7 @@ Widget seriesTileWidget({
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     uiUtilityPackage.customText(
-                      text: 'Series ${index + 1}',
+                      text: series.name,
                       fontSize: TextSize.title,
                       overrideColor: appThemeState.themeClass.white,
                       fontWeight: FontWeight.bold,
@@ -45,19 +47,23 @@ Widget seriesTileWidget({
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         uiUtilityPackage.customText(
-                          text: 'ID: series_${index + 1}',
+                          text: 'ID: ${series.id}',
                           fontSize: TextSize.normal,
                           overrideColor: appThemeState.themeClass.white,
                         ),
                         uiUtilityPackage.customText(
-                          text: 'Date: 2026-02-20',
+                          text: 'Date: ${series.date}',
                           fontSize: TextSize.normal,
                           overrideColor: appThemeState.themeClass.white,
                         ),
-                        uiUtilityPackage.customText(
-                          text: 'Players: ABC, MNO, XYZ',
-                          fontSize: TextSize.normal,
-                          overrideColor: appThemeState.themeClass.white,
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width * 0.6,
+                          child: uiUtilityPackage.customText(
+                            text:
+                                'Players: ${series.players.map((p) => p.name).join(', ')}',
+                            fontSize: TextSize.normal,
+                            overrideColor: appThemeState.themeClass.white,
+                          ),
                         ),
                       ],
                     ),

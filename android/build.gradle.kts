@@ -1,3 +1,7 @@
+plugins {
+    id("org.jetbrains.kotlin.android") version "2.2.0" apply false
+}
+
 allprojects {
     repositories {
         google()

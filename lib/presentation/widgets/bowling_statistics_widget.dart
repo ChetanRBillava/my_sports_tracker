@@ -17,11 +17,12 @@ class BowlingStatisticsWidget extends StatelessWidget {
     required this.economy,
     this.hideLabel = false,
     this.hideHeading = false,
+    this.matchCard = false,
   });
 
   final UiUtilityPackage uiUtilityPackage = UiUtilityPackage();
 
-  bool hideLabel, hideHeading;
+  bool hideLabel, hideHeading, matchCard;
   String player, balls, runs, wickets, noBalls, wides, economy;
 
   @override
@@ -55,7 +56,7 @@ class BowlingStatisticsWidget extends StatelessWidget {
               children: [
                 ///balls
                 SizedBox(
-                  width: 40,
+                  width: matchCard ? 24 : 40,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -79,7 +80,7 @@ class BowlingStatisticsWidget extends StatelessWidget {
 
                 ///runs
                 SizedBox(
-                  width: 40,
+                  width: matchCard ? 24 : 40,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -103,7 +104,7 @@ class BowlingStatisticsWidget extends StatelessWidget {
 
                 ///Wides
                 SizedBox(
-                  width: 28,
+                  width: 24,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -127,7 +128,7 @@ class BowlingStatisticsWidget extends StatelessWidget {
 
                 ///No Balls
                 SizedBox(
-                  width: 28,
+                  width: 24,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -151,7 +152,7 @@ class BowlingStatisticsWidget extends StatelessWidget {
 
                 ///Wickets
                 SizedBox(
-                  width: 28,
+                  width: 24,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [

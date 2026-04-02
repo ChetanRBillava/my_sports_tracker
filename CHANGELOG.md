@@ -27,6 +27,50 @@ Here we write the updates of future releases.
 
 
 
+## [1.0.4] - 02-04-2026
+
+### Added
+- Settings screen for import/export data UI
+- Data Import/Export logic in "data_transfer_service.dart" file
+- Screenshot controller map inside Home Screen State
+
+### Changed
+- Screenshot Controller logic, moved it to Home Page Bloc
+- Release apk name config in "android/app/build.gradle.kts" file
+
+### Removed
+- Hardcode Json data files for player and series data
+
+
+
+## [1.0.3] - 27-03-2026
+
+### Added
+- Bloc logics for Match Screen
+- Router file
+- Screenshot Utility
+- screenshot, path_provider and share_plus plugins
+
+### Changed
+- "Get color" cubit calls in match screen with more simplified and optimal methods.
+- Statistics tile parameter with actual model
+
+
+
+## [1.0.2] - 28-02-2026
+
+### Added
+- Bloc logics for Home Screen
+- Player and Series data import
+- Main models
+
+### Changed
+- "Get color" cubit calls in home screen with more simplified and optimal methods.
+- Statistics tile parameter with actual model
+- Player and Series widget mapped with actual data
+
+
+
 ## [1.0.1] - 25-02-2026
 
 ### Added

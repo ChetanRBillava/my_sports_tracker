@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
+import '../../../../data/models/inning_model.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import 'active_scorecard_widget.dart';
 import 'concluded_scorecard_widget.dart';
@@ -14,12 +15,15 @@ class InningsWidget extends StatelessWidget {
     required this.toggle,
     required this.tossWonBy,
     required this.isActive,
-    required this.index,
+    required this.inningsIndex,
+    required this.maxBalls,
+    required this.inningModel,
   });
 
   final UiUtilityPackage uiUtilityPackage = UiUtilityPackage();
-  final int tossWonBy, index;
+  final int tossWonBy, inningsIndex, maxBalls;
   final bool toggle, isActive;
+  final InningModel inningModel;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +37,10 @@ class InningsWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 uiUtilityPackage.customText(
-                  text: 'Innings ${index + 1}',
+                  text:
+                      inningsIndex > 1
+                          ? 'SUPER OVER INNINGS ${inningsIndex - 1}'
+                          : 'Innings ${inningsIndex + 1}',
                   fontSize: TextSize.title,
                   overrideColor: appThemeState.themeClass.white,
                   fontWeight: FontWeight.bold,
@@ -45,22 +52,31 @@ class InningsWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 uiUtilityPackage.customText(
-                  text: 'Team $tossWonBy: 0/0',
+                  text:
+                      'Team ${inningModel.currentBattingTeam}: ${inningModel.totalRuns}/${inningModel.totalWickets}',
                   fontSize: TextSize.subTitle,
                   overrideColor: appThemeState.themeClass.white,
                   fontWeight: FontWeight.bold,
                 ),
                 uiUtilityPackage.customText(
-                  text: 'Overs: 0.0(2.0)',
+                  text:
+                      'Overs: ${(inningModel.totalBalls / 6).floor()}.${inningModel.totalBalls % 6}(${inningsIndex > 1 ? '1.0' : maxBalls / 6})',
                   fontSize: TextSize.subTitle,
                   overrideColor: appThemeState.themeClass.white,
                   fontWeight: FontWeight.bold,
                 ),
               ],
             ),
-            isActive
-                ? ActiveScorecardWidget(toggle: toggle)
-                : ConcludedScorecardWidget(),
+            inningModel.currentBatsman == 999
+                ? SizedBox.shrink()
+                : isActive
+                ? ActiveScorecardWidget(
+                  toggle: toggle,
+                  currentBatsmanIndex: inningModel.currentBatsman,
+                  currentBowlerIndex: inningModel.currentBowler,
+                  inningModel: inningModel,
+                )
+                : ConcludedScorecardWidget(inningModel: inningModel),
           ],
         );
       },
