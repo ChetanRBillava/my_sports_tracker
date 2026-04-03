@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
+import '../../core/constants/app_strings.dart';
 import '../../logics/cubits/app_theme_cubit.dart';
 
 class BattingStatisticsWidget extends StatelessWidget {
@@ -39,7 +40,7 @@ class BattingStatisticsWidget extends StatelessWidget {
                     hideHeading
                         ? SizedBox.shrink()
                         : uiUtilityPackage.customText(
-                          text: 'Batsman',
+                          text: AppStrings.batsman,
                           fontSize: TextSize.normal,
                           overrideColor:
                               appThemeState.themeClass.textCaptionColor,

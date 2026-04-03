@@ -3,15 +3,19 @@ import 'package:intl/intl.dart';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/services.dart';
-import 'package:my_sports_tracker/core/constants/enums.dart';
-import 'package:my_sports_tracker/data/models/player_model.dart';
+import 'package:my_sports_tracker/core/constants/app_enums.dart';
+import 'package:my_sports_tracker/data/models/player_models/player/player_model.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
-import '../../../../data/models/player_mini_model.dart';
-import '../../../../data/models/series_model.dart';
-import '../../../../data/models/stat_filter_model.dart';
+import '../../../../data/models/player_models/player_mini/player_mini_model.dart';
+import '../../../../data/models/match_models/series/series_model.dart';
+import '../../../../data/models/player_models/stats/player_batting_stats/player_batting_stats.dart';
+import '../../../../data/models/player_models/stats/player_bowling_stats/player_bowling_stats.dart';
+import '../../../../data/models/player_models/stats/player_match_stats/player_match_stats.dart';
+import '../../../../data/models/player_models/stats/player_stats/player_stats_model.dart';
+import '../../../../data/models/statistic_models/stat_filter/stat_filter_model.dart';
 import '../../../utils/custom_print.dart';
 import '../models/statistics_tile_model.dart';
 import 'home_screen_event.dart';
@@ -391,16 +395,22 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       List<SeriesModel> series = state.series.map((p) => p.copyWith()).toList();
 
       for (var players in players) {
-        players.stats = Stats(
-          batting: BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
-          bowling: BowlingStats(
+        players.stats = PlayerStatsModel(
+          batting: PlayerBattingStats(
+            runs: 0,
+            balls: 0,
+            dots: 0,
+            fours: 0,
+            sixes: 0,
+          ),
+          bowling: PlayerBowlingStats(
             wickets: 0,
             runs: 0,
             dots: 0,
             balls: 0,
             wides: 0,
           ),
-          match: MatchStats(
+          match: PlayerMatchStats(
             played: 0,
             won: 0,
             superOvers: 0,
@@ -507,16 +517,22 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     );
     if (event.index != 0) {
       for (var player in tempPlayers) {
-        player.stats = Stats(
-          batting: BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
-          bowling: BowlingStats(
+        player.stats = PlayerStatsModel(
+          batting: PlayerBattingStats(
+            runs: 0,
+            balls: 0,
+            dots: 0,
+            fours: 0,
+            sixes: 0,
+          ),
+          bowling: PlayerBowlingStats(
             wickets: 0,
             runs: 0,
             dots: 0,
             balls: 0,
             wides: 0,
           ),
-          match: MatchStats(
+          match: PlayerMatchStats(
             played: 0,
             won: 0,
             superOvers: 0,
@@ -739,16 +755,22 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       PlayerModel(
         id: generatedId,
         name: event.name,
-        stats: Stats(
-          batting: BattingStats(runs: 0, balls: 0, dots: 0, fours: 0, sixes: 0),
-          bowling: BowlingStats(
+        stats: PlayerStatsModel(
+          batting: PlayerBattingStats(
+            runs: 0,
+            balls: 0,
+            dots: 0,
+            fours: 0,
+            sixes: 0,
+          ),
+          bowling: PlayerBowlingStats(
             wickets: 0,
             runs: 0,
             dots: 0,
             balls: 0,
             wides: 0,
           ),
-          match: MatchStats(
+          match: PlayerMatchStats(
             played: 0,
             won: 0,
             superOvers: 0,

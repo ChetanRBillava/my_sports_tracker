@@ -1,20 +1,32 @@
 import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
-import 'package:my_sports_tracker/data/models/player_mini_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player_mini/player_mini_model.dart';
 
-import 'batting_model.dart';
-import 'bowling_model.dart';
-import 'inning_model.dart';
-import 'match_stats_model.dart';
+import '../../statistic_models/batting/batting_model.dart';
+import '../../statistic_models/bowling/bowling_model.dart';
+import '../inning/inning_model.dart';
+import '../../statistic_models/match_stats/match_stats_model.dart';
 
+part 'match_model.g.dart';
+
+@JsonSerializable()
 class MatchModel {
+  @JsonKey(name: "team1")
   List<PlayerMiniModel> team1;
+  @JsonKey(name: "team2")
   List<PlayerMiniModel> team2;
+  @JsonKey(name: "innings")
   List<InningModel> innings;
+  @JsonKey(name: "toss")
   int toss;
+  @JsonKey(name: "batOrBowl")
   int batOrBowl;
+  @JsonKey(name: "wonBy")
   int wonBy;
+  @JsonKey(name: "maxBalls")
   int maxBalls;
+  @JsonKey(name: "stats")
   MatchStatsModel? stats;
 
   MatchModel({
@@ -48,10 +60,12 @@ class MatchModel {
     stats: stats ?? this.stats,
   );
 
-  factory MatchModel.fromJson(String str) =>
-      MatchModel.fromMap(json.decode(str));
+  factory MatchModel.fromJson(Map<String, dynamic> json) =>
+      _$MatchModelFromJson(json);
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() => _$MatchModelToJson(this);
+
+  String toRawJson() => json.encode(toMap());
 
   factory MatchModel.fromMap(Map<String, dynamic> json) => MatchModel(
     team1:

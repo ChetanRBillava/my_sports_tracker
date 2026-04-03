@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_sports_tracker/data/models/match_model.dart';
+import 'package:my_sports_tracker/data/models/match_models/match/match_model.dart';
 import 'package:my_sports_tracker/presentation/widgets/batting_statistics_widget.dart';
 import 'package:my_sports_tracker/presentation/widgets/bowling_statistics_widget.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
+import '../../../../core/constants/app_strings.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import 'active_scorecard_widget.dart';
 import 'concluded_scorecard_widget.dart';
@@ -132,7 +133,7 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     uiUtilityPackage.customText(
-                      text: 'Match ${widget.index + 1}',
+                      text: '${AppStrings.match} ${widget.index + 1}',
                       fontSize: TextSize.large,
                       overrideColor: appThemeState.themeClass.white,
                     ),
@@ -160,14 +161,15 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                         SizedBox(height: 8),
                         uiUtilityPackage.customText(
                           text:
-                              'Man of the match ${getMotmDetails(type: Motm.motmName)} - ${getMotmDetails(type: Motm.motmRuns)}  &  ${getMotmDetails(type: Motm.motmWickets)}',
+                              '${AppStrings.motmTitle} ${getMotmDetails(type: Motm.motmName)} - ${getMotmDetails(type: Motm.motmRuns)}  &  ${getMotmDetails(type: Motm.motmWickets)}',
                           fontSize: TextSize.normal,
                           overrideColor: appThemeState.themeClass.white,
                         ),
                         SizedBox(height: 8),
                         uiUtilityPackage.customText(
                           text:
-                              'Best Batter - ${getMotmDetails(type: Motm.bestBatterName)} ${getMotmDetails(type: Motm.bestBatterRuns)} | Best Bowler - ${getMotmDetails(type: Motm.bestBowlerName)} ${getMotmDetails(type: Motm.bestBowlerWickets)}',
+                              '${AppStrings.bestBatter} - ${getMotmDetails(type: Motm.bestBatterName)} ${getMotmDetails(type: Motm.bestBatterRuns)}'
+                              ' | ${AppStrings.bestBowler} - ${getMotmDetails(type: Motm.bestBowlerName)} ${getMotmDetails(type: Motm.bestBowlerWickets)}',
                           fontSize: TextSize.normal,
                           overrideColor: appThemeState.themeClass.white,
                         ),

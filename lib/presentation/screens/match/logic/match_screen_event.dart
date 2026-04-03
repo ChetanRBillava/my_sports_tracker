@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 
-import '../../../../core/constants/enums.dart';
-import '../../../../data/models/player_mini_model.dart';
-import '../../../../data/models/series_model.dart';
+import '../../../../core/constants/app_enums.dart';
+import '../../../../data/models/player_models/player_mini/player_mini_model.dart';
+import '../../../../data/models/match_models/series/series_model.dart';
 
 abstract class MatchScreenEvent {}
 

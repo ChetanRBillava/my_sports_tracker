@@ -6,7 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../core/constants/enums.dart';
+import '../../core/constants/app_enums.dart';
 import '../../core/themes/app_theme.dart';
 import '../../presentation/utils/custom_print.dart';
 

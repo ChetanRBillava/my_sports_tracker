@@ -1,20 +1,35 @@
 import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
-import 'package:my_sports_tracker/data/models/player_mini_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player_mini/player_mini_model.dart';
 
-import 'batting_model.dart';
-import 'bowling_model.dart';
+import '../../statistic_models/batting/batting_model.dart';
+import '../../statistic_models/bowling/bowling_model.dart';
+import '../over/over_model.dart';
 
+part 'inning_model.g.dart';
+
+@JsonSerializable()
 class InningModel {
+  @JsonKey(name: "currentBattingTeam")
   int currentBattingTeam;
+  @JsonKey(name: "currentBatsman")
   int currentBatsman;
+  @JsonKey(name: "currentBowler")
   int currentBowler;
+  @JsonKey(name: "totalRuns")
   int totalRuns;
+  @JsonKey(name: "totalWickets")
   int totalWickets;
+  @JsonKey(name: "totalBalls")
   int totalBalls;
-  List<Over> overs;
+  @JsonKey(name: "overs")
+  List<OverModel> overs;
+  @JsonKey(name: "batting")
   List<BattingModel> batting;
+  @JsonKey(name: "bowling")
   List<BowlingModel> bowling;
+  @JsonKey(name: "superOver")
   bool? superOver;
 
   InningModel({
@@ -37,7 +52,7 @@ class InningModel {
     int? totalRuns,
     int? totalWickets,
     int? totalBalls,
-    List<Over>? overs,
+    List<OverModel>? overs,
     List<BattingModel>? batting,
     List<BowlingModel>? bowling,
     bool? superOver,
@@ -54,10 +69,12 @@ class InningModel {
     superOver: superOver ?? this.superOver,
   );
 
-  factory InningModel.fromJson(String str) =>
-      InningModel.fromMap(json.decode(str));
+  factory InningModel.fromJson(Map<String, dynamic> json) =>
+      _$InningModelFromJson(json);
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() => _$InningModelToJson(this);
+
+  String toRawJson() => json.encode(toMap());
 
   factory InningModel.fromMap(Map<String, dynamic> json) => InningModel(
     currentBattingTeam: json["currentBattingTeam"],
@@ -66,7 +83,7 @@ class InningModel {
     totalRuns: json["totalRuns"],
     totalWickets: json["totalWickets"],
     totalBalls: json["totalBalls"],
-    overs: List<Over>.from(json["overs"].map((x) => Over.fromMap(x))),
+    overs: List<OverModel>.from(json["overs"].map((x) => OverModel.fromMap(x))),
     batting: List<BattingModel>.from(
       json["batting"].map((x) => BattingModel.fromMap(x)),
     ),
@@ -87,31 +104,5 @@ class InningModel {
     "batting": List<dynamic>.from(batting.map((x) => x.toMap())),
     "bowling": List<dynamic>.from(bowling.map((x) => x.toMap())),
     "superOver": superOver,
-  };
-}
-
-class Over {
-  List<PlayerMiniModel> bowlers;
-  List<String> over;
-
-  Over({required this.bowlers, required this.over});
-
-  Over copyWith({List<PlayerMiniModel>? bowlers, List<String>? over}) =>
-      Over(bowlers: bowlers ?? this.bowlers, over: over ?? this.over);
-
-  factory Over.fromJson(String str) => Over.fromMap(json.decode(str));
-
-  String toJson() => json.encode(toMap());
-
-  factory Over.fromMap(Map<String, dynamic> json) => Over(
-    bowlers: List<PlayerMiniModel>.from(
-      json["bowlers"].map((x) => PlayerMiniModel.fromMap(x)),
-    ),
-    over: List<String>.from(json["over"].map((x) => x)),
-  );
-
-  Map<String, dynamic> toMap() => {
-    "bowlers": List<dynamic>.from(bowlers.map((x) => x.toMap())),
-    "over": List<dynamic>.from(over.map((x) => x)),
   };
 }

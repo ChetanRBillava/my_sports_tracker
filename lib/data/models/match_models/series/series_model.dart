@@ -1,15 +1,27 @@
 import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
-import 'package:my_sports_tracker/data/models/player_mini_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player_mini/player_mini_model.dart';
 
-import 'match_model.dart';
+import '../match/match_model.dart';
 
+part 'series_model.g.dart';
+
+@JsonSerializable()
 class SeriesModel {
+  @JsonKey(name: "id")
   final String id;
+  @JsonKey(name: "name")
   final String name;
+  @JsonKey(name: "date")
   final String date;
+  @JsonKey(name: "players")
   final List<PlayerMiniModel> players;
-  List<PlayerMiniModel> team1, team2;
+  @JsonKey(name: "team1")
+  List<PlayerMiniModel> team1;
+  @JsonKey(name: "team2")
+  List<PlayerMiniModel> team2;
+  @JsonKey(name: "matches")
   final List<MatchModel> matches;
 
   SeriesModel({
@@ -39,6 +51,13 @@ class SeriesModel {
     team2: team2 ?? this.team2,
     matches: matches ?? this.matches,
   );
+
+  factory SeriesModel.fromJson(Map<String, dynamic> json) =>
+      _$SeriesModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SeriesModelToJson(this);
+
+  String toRawJson() => json.encode(toMap());
 
   factory SeriesModel.fromMap(Map<String, dynamic> map) {
     return SeriesModel(
@@ -90,9 +109,4 @@ class SeriesModel {
       'matches': matches.map((m) => m.toMap()).toList(),
     };
   }
-
-  factory SeriesModel.fromJson(String str) =>
-      SeriesModel.fromMap(json.decode(str));
-
-  String toRawJson() => json.encode(toMap());
 }

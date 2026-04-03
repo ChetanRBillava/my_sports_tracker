@@ -1,4 +1,4 @@
-package com.example.my_sports_tracker
+package com.crb.sports_tracker
 
 import io.flutter.embedding.android.FlutterActivity
 

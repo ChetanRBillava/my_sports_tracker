@@ -1,13 +1,23 @@
 import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
-import 'package:my_sports_tracker/data/models/player_mini_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player_mini/player_mini_model.dart';
 
+part 'bowling_model.g.dart';
+
+@JsonSerializable()
 class BowlingModel {
+  @JsonKey(name: "player")
   PlayerMiniModel player;
+  @JsonKey(name: "balls")
   int balls;
+  @JsonKey(name: "runs")
   int runs;
+  @JsonKey(name: "wides")
   int wides;
+  @JsonKey(name: "noBalls")
   int noBalls;
+  @JsonKey(name: "wickets")
   int wickets;
 
   BowlingModel({
@@ -35,10 +45,12 @@ class BowlingModel {
     wickets: wickets ?? this.wickets,
   );
 
-  factory BowlingModel.fromJson(String str) =>
-      BowlingModel.fromMap(json.decode(str));
+  factory BowlingModel.fromJson(Map<String, dynamic> json) =>
+      _$BowlingModelFromJson(json);
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() => _$BowlingModelToJson(this);
+
+  String toRawJson() => json.encode(toMap());
 
   factory BowlingModel.fromMap(Map<String, dynamic> json) => BowlingModel(
     player: PlayerMiniModel.fromMap(json["player"]),

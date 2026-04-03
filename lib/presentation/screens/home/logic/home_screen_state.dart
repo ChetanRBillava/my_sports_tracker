@@ -1,9 +1,9 @@
-import 'package:my_sports_tracker/data/models/series_model.dart';
+import 'package:my_sports_tracker/data/models/match_models/series/series_model.dart';
 import 'package:screenshot/screenshot.dart';
 
-import '../../../../core/constants/enums.dart';
-import '../../../../data/models/player_model.dart';
-import '../../../../data/models/stat_filter_model.dart';
+import '../../../../core/constants/app_enums.dart';
+import '../../../../data/models/player_models/player/player_model.dart';
+import '../../../../data/models/statistic_models/stat_filter/stat_filter_model.dart';
 import '../models/statistics_tile_model.dart';
 
 class HomeScreenState {

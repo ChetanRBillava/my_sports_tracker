@@ -7,12 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased] - dd-mm-yyyy
 Here we write the updates of future releases.
 
-1.0.xx belongs to Initial Setups
+2.0.xx belongs to API Integration, Firebase Tools and other optimizations.
 
 ### Added
-- Initialised the package files
-- Example folder to test the output of the UI packages
-- Text widgets
+- API Integration
 
 ### Changed
 
@@ -24,6 +22,28 @@ Here we write the updates of future releases.
 
 ### Security
 
+
+
+
+## [2.0.0] - 03-04-2026
+
+### Added
+- Settings screen for import/export data UI
+- Data Import/Export logic in "data_transfer_service.dart" file
+- Screenshot controller map inside Home Screen State
+- Common files to store all the app strings and bools
+- Google services JSON file for Firebase configs
+- API Client, URLs and Repositories
+
+### Changed
+- Package name to "**com.crb.sports_tracker**" in all relevant files
+- Renamed enums file to "app_enums.dart"
+- Screenshot Controller logic, moved it to Home Page Bloc
+- Release apk name config in "android/app/build.gradle.kts" file
+- Updated all models with JSON serializable annotations
+
+### Removed
+- Hardcode JSON data files for player and series data
 
 
 
@@ -39,7 +59,7 @@ Here we write the updates of future releases.
 - Release apk name config in "android/app/build.gradle.kts" file
 
 ### Removed
-- Hardcode Json data files for player and series data
+- Hardcode JSON data files for player and series data
 
 
 

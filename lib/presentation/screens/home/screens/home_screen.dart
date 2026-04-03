@@ -3,16 +3,17 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_sports_tracker/data/models/player_mini_model.dart';
-import 'package:my_sports_tracker/data/models/player_model.dart';
-import 'package:my_sports_tracker/data/models/series_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player_mini/player_mini_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player/player_model.dart';
+import 'package:my_sports_tracker/data/models/match_models/series/series_model.dart';
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_bloc.dart';
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_state.dart';
 import 'package:my_sports_tracker/presentation/screens/match/logic/match_screen_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
-import '../../../../core/constants/enums.dart';
+import '../../../../core/constants/app_enums.dart';
+import '../../../../core/constants/app_strings.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import '../../../router/AppRouter.dart';
 import '../../../utils/custom_print.dart';
@@ -76,7 +77,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return [
       ///Players Widgets
       state.players.isEmpty
-          ? emptyStateWidget(message: 'No Players Added', textColor: textColor)
+          ? emptyStateWidget(
+            message: AppStrings.noPlayersAdded,
+            textColor: textColor,
+          )
           : ListView.builder(
             padding: EdgeInsets.all(16),
             itemCount: state.players.length,
@@ -90,7 +94,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       ///Series Widgets
       state.series.isEmpty
-          ? emptyStateWidget(message: 'No Series Added', textColor: textColor)
+          ? emptyStateWidget(
+            message: AppStrings.noSeriesAdded,
+            textColor: textColor,
+          )
           : ListView.builder(
             padding: EdgeInsets.all(16),
             itemCount: state.series.length,
@@ -131,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               backgroundColor: cardBackgroundColor,
               value: state.selectedFilterIndex,
               hint: uiUtilityPackage.customText(
-                text: 'Select a filter from dropdown...',
+                text: AppStrings.filterHelperText,
                 fontSize: TextSize.medium,
                 overrideColor: whiteColor,
               ),
@@ -172,7 +179,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
       ///Achievements Widgets
       emptyStateWidget(
-        message: 'No Player Achievements Added',
+        message: AppStrings.noAchievementsAdded,
         textColor: textColor,
       ),
     ];
@@ -205,13 +212,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       uiUtilityPackage.showCustomDialog(
         backgroundColor: dialogBackground,
         context: context,
-        title: 'Add New Player',
+        title: AppStrings.addPlayerTitle,
         overrideTitleTextColor: textColor,
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             uiUtilityPackage.customTextField(
-              hintText: 'Enter player name...',
+              hintText: AppStrings.playerNameHelperText,
               controller: textEditingController,
               context: context,
             ),
@@ -219,14 +226,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         actions: [
           uiUtilityPackage.customButton(
-            buttonText: 'Cancel',
+            buttonText: AppStrings.cancel,
             overrideTextColor: textColor,
             onTap: () {
               Navigator.pop(context);
             },
           ),
           uiUtilityPackage.customButton(
-            buttonText: 'Add',
+            buttonText: AppStrings.add,
             overrideTextColor: textColor,
             onTap: () {
               context.read<HomeScreenBloc>().add(
@@ -237,7 +244,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 backgroundColor: buttonColor,
                 context: context,
                 content: uiUtilityPackage.customText(
-                  text: 'Added new player: ${textEditingController.text}',
+                  text:
+                      '${AppStrings.addedNewPlayerMessage}: ${textEditingController.text}',
                   fontSize: TextSize.medium,
                 ),
               );
@@ -268,7 +276,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       uiUtilityPackage.showCustomDialog(
         backgroundColor: dialogBackground,
         context: context,
-        title: 'Create New Series',
+        title: AppStrings.addSeriesTitle,
         overrideTitleTextColor: textColor,
         content: StatefulBuilder(
           builder: (context, setThisState) {
@@ -306,14 +314,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         actions: [
           uiUtilityPackage.customButton(
-            buttonText: 'Cancel',
+            buttonText: AppStrings.cancel,
             overrideTextColor: textColor,
             onTap: () {
               Navigator.pop(context);
             },
           ),
           uiUtilityPackage.customButton(
-            buttonText: 'Save',
+            buttonText: AppStrings.save,
             overrideTextColor: textColor,
             onTap: () {
               context.read<HomeScreenBloc>().add(
@@ -324,7 +332,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 context: context,
                 content: uiUtilityPackage.customText(
                   text:
-                      'Added players: ${selectedPlayers.isEmpty ? "" : selectedPlayers.map((p) => p.name).join(', ')}',
+                      '${AppStrings.addedPlayersMessage}: ${selectedPlayers.isEmpty ? "" : selectedPlayers.map((p) => p.name).join(', ')}',
                   fontSize: TextSize.medium,
                 ),
               );
@@ -368,7 +376,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       children: [
                         uiUtilityPackage.customText(
                           text:
-                              teams.isEmpty ? "Make team" : "The Teams are...",
+                              teams.isEmpty
+                                  ? AppStrings.makeTeam
+                                  : AppStrings.theTeamsAre,
                           fontSize: TextSize.title,
                           overrideColor: textColor,
                         ),
@@ -384,7 +394,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                           0.9,
                                       child: uiUtilityPackage.customText(
                                         text:
-                                            "Team 1: ${teams.isEmpty ? "" : teams[0].map((p) => p.name).join(', ')}",
+                                            "${AppStrings.team} 1: ${teams.isEmpty ? "" : teams[0].map((p) => p.name).join(', ')}",
                                         fontSize: TextSize.medium,
                                         overrideColor: textColor,
                                       ),
@@ -400,7 +410,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                           0.9,
                                       child: uiUtilityPackage.customText(
                                         text:
-                                            "Team 2: ${teams.isEmpty ? "" : teams[1].map((p) => p.name).join(', ')}",
+                                            "${AppStrings.team} 2: ${teams.isEmpty ? "" : teams[1].map((p) => p.name).join(', ')}",
                                         fontSize: TextSize.medium,
                                         overrideColor: textColor,
                                       ),
@@ -415,7 +425,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 uiUtilityPackage.customButton(
-                                  buttonText: 'MAKE TEAM',
+                                  buttonText: AppStrings.makeTeam.toUpperCase(),
                                   buttonColor: buttonColor,
                                   overrideTextColor: textColor,
                                   onTap: () {
@@ -432,7 +442,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 uiUtilityPackage.customButton(
-                                  buttonText: 'REMAKE TEAM',
+                                  buttonText:
+                                      AppStrings.remakeTeam.toUpperCase(),
                                   buttonColor: buttonColor,
                                   overrideTextColor: textColor,
                                   onTap: () {
@@ -444,7 +455,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                                   },
                                 ),
                                 uiUtilityPackage.customButton(
-                                  buttonText: 'CONFIRM TEAMS',
+                                  buttonText:
+                                      AppStrings.confirmTeams.toUpperCase(),
                                   buttonColor: buttonColor,
                                   overrideTextColor: textColor,
                                   onTap: () {
@@ -501,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               appBar: AppBar(
                 backgroundColor: appThemeState.themeClass.appbarBackgroundColor,
                 title: uiUtilityPackage.customText(
-                  text: 'Home Screen ',
+                  text: AppStrings.homeScreenTitle,
                   fontSize: TextSize.title,
                   overrideColor: appThemeState.themeClass.white,
                   fontWeight: FontWeight.bold,
@@ -535,25 +547,25 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                     backgroundColor:
                         appThemeState.themeClass.appbarBackgroundColor,
                     icon: Icon(Icons.person),
-                    label: 'Players',
+                    label: AppStrings.bottomBarTitle1,
                   ),
                   BottomNavigationBarItem(
                     backgroundColor:
                         appThemeState.themeClass.appbarBackgroundColor,
                     icon: Icon(Icons.sports_cricket),
-                    label: 'Series',
+                    label: AppStrings.bottomBarTitle2,
                   ),
                   BottomNavigationBarItem(
                     backgroundColor:
                         appThemeState.themeClass.appbarBackgroundColor,
                     icon: Icon(Icons.leaderboard),
-                    label: 'Statistics',
+                    label: AppStrings.bottomBarTitle3,
                   ),
                   BottomNavigationBarItem(
                     backgroundColor:
                         appThemeState.themeClass.appbarBackgroundColor,
                     icon: Icon(Icons.emoji_events),
-                    label: 'Achievements',
+                    label: AppStrings.bottomBarTitle4,
                   ),
                 ],
                 currentIndex: homeScreenState.selectedBottomBarIndex,
@@ -574,7 +586,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                             homeScreenState.selectedBottomBarIndex == 0
                                 ? addPlayer
                                 : addSeries,
-                        tooltip: 'Add',
+                        tooltip: AppStrings.add,
                         child: Icon(
                           Icons.add,
                           color: appThemeState.themeClass.white,

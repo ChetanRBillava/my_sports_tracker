@@ -1,4 +1,4 @@
-import 'package:my_sports_tracker/data/models/series_model.dart';
+import 'package:my_sports_tracker/data/models/match_models/series/series_model.dart';
 
 class MatchScreenState {
   final int seriesIndex, matchIndex, inningsIndex, overIndex;

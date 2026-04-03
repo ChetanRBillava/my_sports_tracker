@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_sports_tracker/core/constants/app_strings.dart';
 import 'package:my_sports_tracker/logics/cubits/app_theme_cubit.dart';
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_bloc.dart';
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_event.dart';
@@ -8,8 +9,8 @@ import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 import 'package:screenshot/screenshot.dart';
 
-import '../../../../core/constants/enums.dart';
-import '../../../../data/models/player_model.dart';
+import '../../../../core/constants/app_enums.dart';
+import '../../../../data/models/player_models/player/player_model.dart';
 import '../../../utils/screenshot_utility.dart';
 import '../models/statistics_tile_model.dart';
 
@@ -179,8 +180,7 @@ Widget statisticsTileWidget({
                                                   .players!
                                                   .isEmpty
                                               ? uiUtilityPackage.customText(
-                                                text:
-                                                    'statistics not available',
+                                                text: AppStrings.noStatistics,
                                                 fontSize: TextSize.normal,
                                                 overrideColor:
                                                     appThemeState

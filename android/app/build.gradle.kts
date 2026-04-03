@@ -3,10 +3,21 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    // Firebase
+    id("com.google.gms.google-services")
+}
+
+dependencies {
+    // Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:34.11.0"))
+
+
+    // Dependencies for Firebase products
+    implementation("com.google.firebase:firebase-analytics")
 }
 
 android {
-    namespace = "com.example.my_sports_tracker"
+    namespace = "com.crb.sports_tracker"
     compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
@@ -21,10 +32,10 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.my_sports_tracker"
+        applicationId = "com.crb.sports_tracker"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 21
+        minSdk = 23
         targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
@@ -40,7 +51,7 @@ android {
 
     applicationVariants.all {
         outputs.all {
-            val name = "My Sports Tracker V1.0.4.apk"
+            val name = "My Sports Tracker V2.0.0.apk"
             (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl).outputFileName = name
         }
     }

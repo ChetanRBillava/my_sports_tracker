@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_sports_tracker/core/constants/app_strings.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
-import '../../../../data/models/player_model.dart';
+import '../../../../data/models/player_models/player/player_model.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import '../../../widgets/batting_statistics_widget.dart';
 import '../../../widgets/bowling_statistics_widget.dart';
@@ -76,7 +77,7 @@ Widget playerTileWidget({required int index, required PlayerModel player}) {
                             children: [
                               ///Batting Statistics
                               uiUtilityPackage.customText(
-                                text: 'Batting Statistics',
+                                text: AppStrings.battingStatistics,
                                 fontSize: TextSize.subTitle,
                                 overrideColor: appThemeState.themeClass.white,
                               ),
@@ -102,7 +103,7 @@ Widget playerTileWidget({required int index, required PlayerModel player}) {
 
                               ///Bowling Statistics
                               uiUtilityPackage.customText(
-                                text: 'Bowling Statistics',
+                                text: AppStrings.bowlingStatistics,
                                 fontSize: TextSize.subTitle,
                                 overrideColor: appThemeState.themeClass.white,
                               ),
@@ -134,7 +135,7 @@ Widget playerTileWidget({required int index, required PlayerModel player}) {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   uiUtilityPackage.customText(
-                                    text: 'Match Statistics',
+                                    text: AppStrings.matchStatistics,
                                     fontSize: TextSize.subTitle,
                                     overrideColor:
                                         appThemeState.themeClass.white,
@@ -145,7 +146,8 @@ Widget playerTileWidget({required int index, required PlayerModel player}) {
                                       Row(
                                         children: [
                                           uiUtilityPackage.customText(
-                                            text: 'Played - ',
+                                            text:
+                                                '${AppStrings.played.toUpperCase()} - ',
                                             fontSize: TextSize.normal,
                                             overrideColor:
                                                 appThemeState.themeClass.white,
@@ -169,7 +171,8 @@ Widget playerTileWidget({required int index, required PlayerModel player}) {
                                       Row(
                                         children: [
                                           uiUtilityPackage.customText(
-                                            text: 'Won - ',
+                                            text:
+                                                '${AppStrings.won.toUpperCase()} - ',
                                             fontSize: TextSize.normal,
                                             overrideColor:
                                                 appThemeState.themeClass.white,
@@ -192,7 +195,7 @@ Widget playerTileWidget({required int index, required PlayerModel player}) {
                                       Row(
                                         children: [
                                           uiUtilityPackage.customText(
-                                            text: 'MOTM - ',
+                                            text: '${AppStrings.motm} - ',
                                             fontSize: TextSize.normal,
                                             overrideColor:
                                                 appThemeState.themeClass.white,
@@ -218,13 +221,14 @@ Widget playerTileWidget({required int index, required PlayerModel player}) {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               uiUtilityPackage.customText(
-                                text: 'ID: ${player.id}',
+                                text: '${AppStrings.id}: ${player.id}',
                                 fontSize: TextSize.normal,
                                 overrideColor: appThemeState.themeClass.white,
                               ),
                               uiUtilityPackage.customText(
                                 text:
-                                    'RUNS: ${player.stats?.batting?.runs} | S/R: ${getSR()} | WICKETS: ${player.stats?.bowling?.wickets}',
+                                    '${AppStrings.runs.toUpperCase()}: ${player.stats?.batting?.runs} | '
+                                    '${AppStrings.sr}: ${getSR()} | ${AppStrings.wickets.toUpperCase()}: ${player.stats?.bowling?.wickets}',
                                 fontSize: TextSize.normal,
                                 overrideColor: appThemeState.themeClass.white,
                               ),

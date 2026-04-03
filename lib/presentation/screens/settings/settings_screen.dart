@@ -10,6 +10,8 @@ import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../../../core/constants/app_strings.dart';
+
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
@@ -37,7 +39,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             title: uiUtilityPackage.customText(
-              text: 'Settings Screen ',
+              text: AppStrings.settingsScreenTitle,
               fontSize: TextSize.title,
               overrideColor: appThemeState.themeClass.white,
               fontWeight: FontWeight.bold,
@@ -53,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       uiUtilityPackage.customText(
-                        text: 'Import Players',
+                        text: AppStrings.importPlayers,
                         fontSize: TextSize.subTitle,
                         overrideColor: appThemeState.themeClass.white,
                         fontWeight: FontWeight.bold,
@@ -78,7 +80,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 backgroundColor:
                                     appThemeState.themeClass.warningColor,
                                 content: uiUtilityPackage.customText(
-                                  text: '⚠️︎ Wrong File',
+                                  text: AppStrings.wrongFile,
                                   fontSize: TextSize.subTitle,
                                   overrideColor: appThemeState.themeClass.white,
                                   fontWeight: FontWeight.bold,
@@ -106,8 +108,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 content: uiUtilityPackage.customText(
                                   text:
                                       resp.isNotEmpty
-                                          ? '✅ Players imported!'
-                                          : '❌ Import failed',
+                                          ? AppStrings.playersImported
+                                          : AppStrings.importFailed,
                                   fontSize: TextSize.subTitle,
                                   overrideColor: appThemeState.themeClass.white,
                                   fontWeight: FontWeight.bold,
@@ -131,7 +133,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       uiUtilityPackage.customText(
-                        text: 'Export Player Data',
+                        text: AppStrings.exportPlayers,
                         fontSize: TextSize.subTitle,
                         overrideColor: appThemeState.themeClass.white,
                         fontWeight: FontWeight.bold,
@@ -144,7 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             uiUtilityPackage.showCustomSnackBar(
                               context: context,
                               content: uiUtilityPackage.customText(
-                                text: '✅ Exported to: $filePath',
+                                text: '${AppStrings.exportedTo}: $filePath',
                                 fontSize: TextSize.subTitle,
                                 overrideColor: appThemeState.themeClass.white,
                                 fontWeight: FontWeight.bold,
@@ -159,7 +161,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             uiUtilityPackage.showCustomSnackBar(
                               context: context,
                               content: uiUtilityPackage.customText(
-                                text: 'No players to export',
+                                text: AppStrings.noPlayerExportMessage,
                                 fontSize: TextSize.subTitle,
                                 overrideColor: appThemeState.themeClass.white,
                                 fontWeight: FontWeight.bold,
@@ -182,7 +184,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       uiUtilityPackage.customText(
-                        text: 'Import Series',
+                        text: AppStrings.importSeries,
                         fontSize: TextSize.subTitle,
                         overrideColor: appThemeState.themeClass.white,
                         fontWeight: FontWeight.bold,
@@ -207,7 +209,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 backgroundColor:
                                     appThemeState.themeClass.warningColor,
                                 content: uiUtilityPackage.customText(
-                                  text: '⚠️︎ Wrong File',
+                                  text: AppStrings.wrongFile,
                                   fontSize: TextSize.subTitle,
                                   overrideColor: appThemeState.themeClass.white,
                                   fontWeight: FontWeight.bold,
@@ -235,8 +237,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                 content: uiUtilityPackage.customText(
                                   text:
                                       resp.isNotEmpty
-                                          ? '✅ Series imported!'
-                                          : '❌ Import failed',
+                                          ? AppStrings.seriesImported
+                                          : AppStrings.importFailed,
                                   fontSize: TextSize.subTitle,
                                   overrideColor: appThemeState.themeClass.white,
                                   fontWeight: FontWeight.bold,
@@ -260,7 +262,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       uiUtilityPackage.customText(
-                        text: 'Export Series Data',
+                        text: AppStrings.exportSeries,
                         fontSize: TextSize.subTitle,
                         overrideColor: appThemeState.themeClass.white,
                         fontWeight: FontWeight.bold,
@@ -274,7 +276,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             uiUtilityPackage.showCustomSnackBar(
                               context: context,
                               content: uiUtilityPackage.customText(
-                                text: '✅ Exported to: $filePath',
+                                text: '${AppStrings.exportedTo}: $filePath',
                                 fontSize: TextSize.subTitle,
                                 overrideColor: appThemeState.themeClass.white,
                                 fontWeight: FontWeight.bold,
@@ -289,7 +291,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             uiUtilityPackage.showCustomSnackBar(
                               context: context,
                               content: uiUtilityPackage.customText(
-                                text: 'No series to export',
+                                text: AppStrings.noSeriesExportMessage,
                                 fontSize: TextSize.subTitle,
                                 overrideColor: appThemeState.themeClass.white,
                                 fontWeight: FontWeight.bold,

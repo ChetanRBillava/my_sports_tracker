@@ -1,8 +1,8 @@
-import 'package:my_sports_tracker/data/models/player_model.dart';
-import 'package:my_sports_tracker/data/models/series_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player/player_model.dart';
+import 'package:my_sports_tracker/data/models/match_models/series/series_model.dart';
 
-import '../../../../core/constants/enums.dart';
-import '../../../../data/models/player_mini_model.dart';
+import '../../../../core/constants/app_enums.dart';
+import '../../../../data/models/player_models/player_mini/player_mini_model.dart';
 
 abstract class HomeScreenEvent {}
 

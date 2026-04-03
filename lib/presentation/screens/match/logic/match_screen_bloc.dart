@@ -1,16 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_sports_tracker/data/models/batting_model.dart';
-import 'package:my_sports_tracker/data/models/inning_model.dart';
-import 'package:my_sports_tracker/data/models/player_mini_model.dart';
-import 'package:my_sports_tracker/data/models/series_model.dart';
+import 'package:my_sports_tracker/data/models/statistic_models/batting/batting_model.dart';
+import 'package:my_sports_tracker/data/models/match_models/inning/inning_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player_mini/player_mini_model.dart';
+import 'package:my_sports_tracker/data/models/match_models/series/series_model.dart';
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_bloc.dart';
 
-import '../../../../core/constants/enums.dart';
-import '../../../../data/models/bowling_model.dart';
-import '../../../../data/models/match_model.dart';
-import '../../../../data/models/match_stats_model.dart';
+import '../../../../core/constants/app_enums.dart';
+import '../../../../data/models/match_models/over/over_model.dart';
+import '../../../../data/models/statistic_models/bowling/bowling_model.dart';
+import '../../../../data/models/match_models/match/match_model.dart';
+import '../../../../data/models/statistic_models/man_of_the_match/man_of_the_match_model.dart';
+import '../../../../data/models/statistic_models/match_stats/match_stats_model.dart';
 import '../../../router/AppRouter.dart';
 import '../../../utils/custom_print.dart';
 import '../../home/logic/home_screen_event.dart';
@@ -138,7 +140,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
         totalRuns: 0,
         totalWickets: 0,
         totalBalls: 0,
-        overs: [Over(bowlers: [], over: [])],
+        overs: [OverModel(bowlers: [], over: [])],
         batting: [],
         bowling: [],
         superOver: false,
@@ -492,7 +494,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
         (inningModel.overs[overIndex].over.length > 5)) {
       if (inningModel.totalBalls < matchModel.maxBalls &&
           inningModel.totalBalls % 6 == 0) {
-        inningModel.overs.add(Over(bowlers: [], over: []));
+        inningModel.overs.add(OverModel(bowlers: [], over: []));
         overIndex += 1;
       }
       updateLineup = true;
@@ -571,7 +573,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
           }
         }
 
-        matchModel.stats?.manOfTheMatch = ManOfTheMatch(
+        matchModel.stats?.manOfTheMatch = ManOfTheMatchModel(
           player: player,
           batting: batting,
           bowling: bowling,
@@ -645,7 +647,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
           totalRuns: 0,
           totalWickets: 0,
           totalBalls: 0,
-          overs: [Over(bowlers: [], over: [])],
+          overs: [OverModel(bowlers: [], over: [])],
           batting: batting,
           bowling: bowling,
           superOver: true,
@@ -732,7 +734,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
             totalRuns: 0,
             totalWickets: 0,
             totalBalls: 0,
-            overs: [Over(bowlers: [], over: [])],
+            overs: [OverModel(bowlers: [], over: [])],
             batting: batting,
             bowling: bowling,
             superOver: true,
@@ -795,7 +797,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
               'Batting stats: ${batting?.toJson()}\nBowling stats: ${bowling?.toJson()}',
         );
 
-        matchModel.stats?.manOfTheMatch = ManOfTheMatch(
+        matchModel.stats?.manOfTheMatch = ManOfTheMatchModel(
           player: player,
           batting: batting,
           bowling: bowling,
@@ -871,7 +873,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
           totalRuns: 0,
           totalWickets: 0,
           totalBalls: 0,
-          overs: [Over(bowlers: [], over: [])],
+          overs: [OverModel(bowlers: [], over: [])],
           batting: batting,
           bowling: bowling,
           superOver: false,
@@ -901,8 +903,8 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
     SeriesModel seriesModel = state.series!;
     MatchModel matchModel = seriesModel.matches[state.matchIndex];
     InningModel inningModel = matchModel.innings[state.inningsIndex];
-    List<Over> overs = inningModel.overs;
-    Over over = overs[state.overIndex];
+    List<OverModel> overs = inningModel.overs;
+    OverModel over = overs[state.overIndex];
     String score = over.over.last;
 
     customPrint.print(message: 'Removing $score');
@@ -1055,7 +1057,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
             totalRuns: 0,
             totalWickets: 0,
             totalBalls: 0,
-            overs: [Over(bowlers: [], over: [])],
+            overs: [OverModel(bowlers: [], over: [])],
             batting: batting,
             bowling: bowling,
             superOver: true,
@@ -1092,7 +1094,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
           }
         }
 
-        matchModel.stats?.manOfTheMatch = ManOfTheMatch(
+        matchModel.stats?.manOfTheMatch = ManOfTheMatchModel(
           player: player,
           batting: batting,
           bowling: bowling,
@@ -1173,7 +1175,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
           totalRuns: 0,
           totalWickets: 0,
           totalBalls: 0,
-          overs: [Over(bowlers: [], over: [])],
+          overs: [OverModel(bowlers: [], over: [])],
           batting: batting,
           bowling: bowling,
           superOver: false,

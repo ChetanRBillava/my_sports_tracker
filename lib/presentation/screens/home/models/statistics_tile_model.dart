@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:my_sports_tracker/data/models/player_model.dart';
+import 'package:my_sports_tracker/data/models/player_models/player/player_model.dart';
 
-import '../../../../core/constants/enums.dart';
+import '../../../../core/constants/app_enums.dart';
 
 class StatisticsTileModel {
   String title;

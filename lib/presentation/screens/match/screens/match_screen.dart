@@ -2,18 +2,20 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_sports_tracker/data/models/series_model.dart';
+import 'package:my_sports_tracker/core/constants/app_strings.dart';
+import 'package:my_sports_tracker/data/models/match_models/inning/inning_model.dart';
+import 'package:my_sports_tracker/data/models/match_models/series/series_model.dart';
 import 'package:my_sports_tracker/logics/cubits/app_theme_cubit.dart';
 import 'package:my_sports_tracker/presentation/screens/match/logic/match_screen_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
-import '../../../../core/constants/enums.dart';
-import '../../../../data/models/batting_model.dart';
-import '../../../../data/models/bowling_model.dart';
-import '../../../../data/models/match_model.dart';
-import '../../../../data/models/player_mini_model.dart';
-import '../../../../data/models/player_model.dart';
+import '../../../../core/constants/app_enums.dart';
+import '../../../../data/models/statistic_models/batting/batting_model.dart';
+import '../../../../data/models/statistic_models/bowling/bowling_model.dart';
+import '../../../../data/models/match_models/match/match_model.dart';
+import '../../../../data/models/player_models/player_mini/player_mini_model.dart';
+import '../../../../data/models/player_models/player/player_model.dart';
 import '../../../utils/custom_print.dart';
 import '../../home/logic/home_screen_bloc.dart';
 import '../logic/match_screen_event.dart';
@@ -114,14 +116,14 @@ class _MatchScreenState extends State<MatchScreen> {
                                 uiUtilityPackage.customText(
                                   text:
                                       addMatch
-                                          ? 'Add New Match'
+                                          ? AppStrings.addNewMatch
                                           : update
-                                          ? 'Update Lineup'
+                                          ? AppStrings.updateLineup
                                           : tossWonBy == 999
-                                          ? "Toss"
+                                          ? AppStrings.toss
                                           : batOrBowl == 999
-                                          ? "Team $tossWonBy won the toss"
-                                          : "Team $tossWonBy choose to ${batOrBowl == 1 ? "Bat" : "Bowl"}",
+                                          ? "${AppStrings.team} $tossWonBy ${AppStrings.wonTheToss}"
+                                          : "${AppStrings.team} $tossWonBy ${AppStrings.chooseTo} ${batOrBowl == 1 ? AppStrings.bat : AppStrings.bowl}",
                                   fontSize: TextSize.title,
                                   overrideColor: textColor,
                                 ),
@@ -134,7 +136,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     uiUtilityPackage.customButton(
-                                      buttonText: 'ADD',
+                                      buttonText: AppStrings.add.toUpperCase(),
                                       borderColor: buttonColor,
                                       overrideTextColor: textColor,
                                       onTap: () {
@@ -152,7 +154,8 @@ class _MatchScreenState extends State<MatchScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     uiUtilityPackage.customButton(
-                                      buttonText: 'MAKE TOSS',
+                                      buttonText:
+                                          AppStrings.makeToss.toUpperCase(),
                                       borderColor: buttonColor,
                                       overrideTextColor: textColor,
                                       onTap: () {
@@ -171,7 +174,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     uiUtilityPackage.customButton(
-                                      buttonText: 'BAT',
+                                      buttonText: AppStrings.bat.toUpperCase(),
                                       borderColor: buttonColor,
                                       overrideTextColor: textColor,
                                       onTap: () {
@@ -190,7 +193,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                       },
                                     ),
                                     uiUtilityPackage.customButton(
-                                      buttonText: 'BOWL',
+                                      buttonText: AppStrings.bowl.toUpperCase(),
                                       borderColor: buttonColor,
                                       overrideTextColor: textColor,
                                       onTap: () {
@@ -213,7 +216,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                 : Column(
                                   children: [
                                     uiUtilityPackage.customText(
-                                      text: "Select Batsman",
+                                      text: AppStrings.selectBatsman,
                                       fontSize: TextSize.subTitle,
                                       overrideColor: textColor,
                                     ),
@@ -256,7 +259,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                     const SizedBox(height: 16),
 
                                     uiUtilityPackage.customText(
-                                      text: "Select Bowler",
+                                      text: AppStrings.selectBowler,
                                       fontSize: TextSize.subTitle,
                                       overrideColor: textColor,
                                     ),
@@ -311,7 +314,8 @@ class _MatchScreenState extends State<MatchScreen> {
                                                 ? SizedBox.shrink()
                                                 : uiUtilityPackage.customButton(
                                                   buttonText:
-                                                      'Conclude Innings',
+                                                      AppStrings
+                                                          .concludeInnings,
                                                   borderColor: buttonColor,
                                                   overrideTextColor: textColor,
                                                   onTap: () {
@@ -326,7 +330,8 @@ class _MatchScreenState extends State<MatchScreen> {
                                                   },
                                                 ),
                                             uiUtilityPackage.customButton(
-                                              buttonText: 'Update Innings',
+                                              buttonText:
+                                                  AppStrings.updateInnings,
                                               borderColor: buttonColor,
                                               overrideTextColor: textColor,
                                               onTap: () {
@@ -347,7 +352,8 @@ class _MatchScreenState extends State<MatchScreen> {
                                           ],
                                         )
                                         : uiUtilityPackage.customButton(
-                                          buttonText: 'Proceed',
+                                          buttonText:
+                                              AppStrings.proceed.toUpperCase(),
                                           borderColor: buttonColor,
                                           overrideTextColor: textColor,
                                           onTap: () {
@@ -390,12 +396,22 @@ class _MatchScreenState extends State<MatchScreen> {
     return tossWonBy;
   }
 
-  Future<void> scorePopup() async {
+  Future<void> scorePopup({
+    required String batterName,
+    required String batterRuns,
+    required String batterBalls,
+    required String bowlerName,
+    required String bowlerRuns,
+    required String bowlerWickets,
+  }) async {
     final cubit = context.read<AppThemeCubit>();
     final bloc = context.read<MatchScreenBloc>();
-    Color? dialogBackground, textColor;
+    Color? dialogBackground, textColor, textCaptionColor;
     if (mounted) {
       textColor = await cubit.getColor(color: AppColors.white);
+      textCaptionColor = await cubit.getColor(
+        color: AppColors.textCaptionColor,
+      );
       dialogBackground = await cubit.getColor(
         color: AppColors.cardBackgroundColor,
       );
@@ -425,10 +441,48 @@ class _MatchScreenState extends State<MatchScreen> {
                       Column(
                         children: [
                           uiUtilityPackage.customText(
-                            text: "Add Score".toUpperCase(),
+                            text: AppStrings.addScore.toUpperCase(),
                             fontSize: TextSize.title,
                             overrideColor: textColor,
                             fontWeight: FontWeight.bold,
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  uiUtilityPackage.customText(
+                                    text: AppStrings.batsman,
+                                    fontSize: TextSize.medium,
+                                    overrideColor: textCaptionColor,
+                                  ),
+                                  uiUtilityPackage.customText(
+                                    text:
+                                        '$batterName $batterRuns($batterBalls)',
+                                    fontSize: TextSize.subTitle,
+                                    overrideColor: textColor,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  uiUtilityPackage.customText(
+                                    text: AppStrings.bowler,
+                                    fontSize: TextSize.medium,
+                                    overrideColor: textCaptionColor,
+                                  ),
+                                  uiUtilityPackage.customText(
+                                    text:
+                                        '$bowlerWickets/$bowlerRuns $bowlerName',
+                                    fontSize: TextSize.subTitle,
+                                    overrideColor: textColor,
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                           const SizedBox(height: 8),
                           Wrap(
@@ -457,7 +511,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                         uiUtilityPackage.showCustomDialog(
                                           backgroundColor: dialogBackground,
                                           context: context,
-                                          title: 'Confirm Wicket',
+                                          title: AppStrings.confirmWicket,
                                           overrideTitleTextColor: textColor,
                                           content: Row(
                                             mainAxisAlignment:
@@ -465,7 +519,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                             children: [
                                               uiUtilityPackage.customText(
                                                 text:
-                                                    'Confirm wicket of ${batter?.name}',
+                                                    '${AppStrings.confirmWicket} of ${batter?.name}',
                                                 overrideColor: textColor,
                                                 fontSize: TextSize.label,
                                               ),
@@ -473,14 +527,17 @@ class _MatchScreenState extends State<MatchScreen> {
                                           ),
                                           actions: [
                                             uiUtilityPackage.customButton(
-                                              buttonText: 'Cancel',
+                                              buttonText:
+                                                  AppStrings.confirm
+                                                      .toUpperCase(),
                                               overrideTextColor: textColor,
                                               onTap: () {
                                                 Navigator.pop(context);
                                               },
                                             ),
                                             uiUtilityPackage.customButton(
-                                              buttonText: 'Confirm',
+                                              buttonText:
+                                                  AppStrings.yes.toUpperCase(),
                                               overrideTextColor: textColor,
                                               onTap: () {
                                                 context
@@ -560,7 +617,7 @@ class _MatchScreenState extends State<MatchScreen> {
       uiUtilityPackage.showCustomDialog(
         backgroundColor: dialogBackground,
         context: context,
-        title: 'Add Player',
+        title: AppStrings.addPlayerTitle,
         overrideTitleTextColor: textColor,
         content: StatefulBuilder(
           builder: (context, setThisState) {
@@ -593,7 +650,7 @@ class _MatchScreenState extends State<MatchScreen> {
           team1.length > team2.length
               ? SizedBox.shrink()
               : uiUtilityPackage.customButton(
-                buttonText: 'Team 1',
+                buttonText: '${AppStrings.team} 1',
                 overrideTextColor: textColor,
                 onTap: () {
                   context.read<MatchScreenBloc>().add(
@@ -607,7 +664,8 @@ class _MatchScreenState extends State<MatchScreen> {
                     backgroundColor: buttonColor,
                     context: context,
                     content: uiUtilityPackage.customText(
-                      text: 'Player added to team 1: ${selectedPlayer?.name}',
+                      text:
+                          '${AppStrings.playerAdded} to ${AppStrings.team} 1: ${selectedPlayer?.name}',
                       fontSize: TextSize.medium,
                     ),
                   );
@@ -617,7 +675,7 @@ class _MatchScreenState extends State<MatchScreen> {
           team2.length > team1.length
               ? SizedBox.shrink()
               : uiUtilityPackage.customButton(
-                buttonText: 'Team 2',
+                buttonText: '${AppStrings.team} 2',
                 overrideTextColor: textColor,
                 onTap: () {
                   context.read<MatchScreenBloc>().add(
@@ -631,7 +689,8 @@ class _MatchScreenState extends State<MatchScreen> {
                     backgroundColor: buttonColor,
                     context: context,
                     content: uiUtilityPackage.customText(
-                      text: 'Player added to team 2: ${selectedPlayer?.name}',
+                      text:
+                          '${AppStrings.playerAdded} to ${AppStrings.team} 2: ${selectedPlayer?.name}',
                       fontSize: TextSize.medium,
                     ),
                   );
@@ -672,7 +731,7 @@ class _MatchScreenState extends State<MatchScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               uiUtilityPackage.customText(
-                                text: 'Teams',
+                                text: AppStrings.teams,
                                 fontSize: TextSize.title,
                                 overrideColor: appThemeState.themeClass.white,
                               ),
@@ -690,7 +749,7 @@ class _MatchScreenState extends State<MatchScreen> {
                             children: [
                               uiUtilityPackage.customText(
                                 text:
-                                    'Team 1: ${matchScreenState.series!.team1.map((p) => p.name).join(', ')}',
+                                    '${AppStrings.team} 1: ${matchScreenState.series!.team1.map((p) => p.name).join(', ')}',
                                 fontSize: TextSize.medium,
                                 overrideColor: appThemeState.themeClass.white,
                               ),
@@ -701,7 +760,7 @@ class _MatchScreenState extends State<MatchScreen> {
                             children: [
                               uiUtilityPackage.customText(
                                 text:
-                                    'Team 2: ${matchScreenState.series!.team2.map((p) => p.name).join(', ')}',
+                                    '${AppStrings.team} 2: ${matchScreenState.series!.team2.map((p) => p.name).join(', ')}',
                                 fontSize: TextSize.medium,
                                 overrideColor: appThemeState.themeClass.white,
                               ),
@@ -770,7 +829,45 @@ class _MatchScreenState extends State<MatchScreen> {
                                             .wonBy !=
                                         2),
                           )
-                          : scorePopup,
+                          : () {
+                            MatchModel match =
+                                matchScreenState
+                                    .series!
+                                    .matches[matchScreenState.matchIndex];
+                            InningModel inning =
+                                match.innings[matchScreenState.inningsIndex];
+                            String batter =
+                                    inning
+                                        .batting[inning.currentBatsman]
+                                        .player
+                                        .name,
+                                bowler =
+                                    inning
+                                        .bowling[inning.currentBowler]
+                                        .player
+                                        .name,
+                                batterRuns =
+                                    inning.batting[inning.currentBatsman].runs
+                                        .toString(),
+                                batterBalls =
+                                    inning.batting[inning.currentBatsman].balls
+                                        .toString(),
+                                bowlerRuns =
+                                    inning.bowling[inning.currentBowler].runs
+                                        .toString(),
+                                bowlerWickets =
+                                    inning.bowling[inning.currentBowler].wickets
+                                        .toString();
+                            customPrint.print(message: 'Batter: $batter');
+                            scorePopup(
+                              batterName: batter,
+                              batterRuns: batterRuns,
+                              batterBalls: batterBalls,
+                              bowlerName: bowler,
+                              bowlerRuns: bowlerRuns,
+                              bowlerWickets: bowlerWickets,
+                            );
+                          },
                   child: Icon(
                     (matchScreenState
                                     .series!

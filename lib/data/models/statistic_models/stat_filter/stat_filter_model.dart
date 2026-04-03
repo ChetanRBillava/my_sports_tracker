@@ -1,7 +1,16 @@
 import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'stat_filter_model.g.dart';
+
+@JsonSerializable()
 class StatFilterModel {
-  String? month, monthName, year;
+  @JsonKey(name: "manOfTheMatch")
+  String? month;
+  @JsonKey(name: "monthName")
+  String? monthName;
+  @JsonKey(name: "year")
+  String? year;
 
   StatFilterModel({this.month, this.year, this.monthName});
 
@@ -12,10 +21,12 @@ class StatFilterModel {
         year: year ?? this.year,
       );
 
-  factory StatFilterModel.fromJson(String str) =>
-      StatFilterModel.fromMap(json.decode(str));
+  factory StatFilterModel.fromJson(Map<String, dynamic> json) =>
+      _$StatFilterModelFromJson(json);
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toJson() => _$StatFilterModelToJson(this);
+
+  String toRawJson() => json.encode(toMap());
 
   factory StatFilterModel.fromMap(Map<String, dynamic> json) => StatFilterModel(
     month: json["month"],

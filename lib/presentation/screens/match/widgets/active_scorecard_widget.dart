@@ -4,7 +4,8 @@ import 'package:my_sports_tracker/presentation/screens/match/logic/match_screen_
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
-import '../../../../data/models/inning_model.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../data/models/match_models/inning/inning_model.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import '../../../widgets/batting_statistics_widget.dart';
 import '../../../widgets/bowling_statistics_widget.dart';
@@ -64,7 +65,7 @@ class ActiveScorecardWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         uiUtilityPackage.customText(
-                          text: 'Batsman',
+                          text: AppStrings.batsman,
                           fontSize: TextSize.medium,
                           overrideColor:
                               appThemeState.themeClass.textCaptionColor,
@@ -83,7 +84,7 @@ class ActiveScorecardWidget extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         uiUtilityPackage.customText(
-                          text: 'Bowler',
+                          text: AppStrings.bowler,
                           fontSize: TextSize.medium,
                           overrideColor:
                               appThemeState.themeClass.textCaptionColor,
@@ -157,7 +158,7 @@ class ActiveScorecardWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     uiUtilityPackage.customText(
-                      text: 'This Over',
+                      text: AppStrings.thisOver,
                       fontSize: TextSize.medium,
                       overrideColor: appThemeState.themeClass.textCaptionColor,
                     ),
@@ -183,15 +184,14 @@ class ActiveScorecardWidget extends StatelessWidget {
                                         .cardBackgroundColor,
                                 context: context,
                                 title:
-                                    'Revert score - ${inningModel.overs.last.over.last}!?',
+                                    '${AppStrings.revertScore} - ${inningModel.overs.last.over.last}!?',
                                 overrideTitleTextColor:
                                     appThemeState.themeClass.white,
                                 content: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     uiUtilityPackage.customText(
-                                      text:
-                                          'Do you really want to revert\nthe score!??',
+                                      text: AppStrings.revertMessage,
                                       overrideColor:
                                           appThemeState.themeClass.white,
                                       fontSize: TextSize.label,
@@ -200,7 +200,7 @@ class ActiveScorecardWidget extends StatelessWidget {
                                 ),
                                 actions: [
                                   uiUtilityPackage.customButton(
-                                    buttonText: 'Cancel',
+                                    buttonText: AppStrings.cancel.toUpperCase(),
                                     overrideTextColor:
                                         appThemeState.themeClass.white,
                                     onTap: () {
@@ -208,7 +208,8 @@ class ActiveScorecardWidget extends StatelessWidget {
                                     },
                                   ),
                                   uiUtilityPackage.customButton(
-                                    buttonText: 'Confirm',
+                                    buttonText:
+                                        AppStrings.confirm.toUpperCase(),
                                     overrideTextColor:
                                         appThemeState.themeClass.white,
                                     onTap: () {
@@ -270,7 +271,7 @@ class ActiveScorecardWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     uiUtilityPackage.customText(
-                      text: 'Last Over',
+                      text: AppStrings.lastOver,
                       fontSize: TextSize.medium,
                       overrideColor: appThemeState.themeClass.textCaptionColor,
                     ),

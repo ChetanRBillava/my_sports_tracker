@@ -5,8 +5,19 @@ import 'package:my_sports_tracker/presentation/router/AppRouter.dart';
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_bloc.dart';
 import 'package:my_sports_tracker/presentation/screens/home/screens/home_screen.dart';
 import 'package:my_sports_tracker/presentation/screens/match/logic/match_screen_bloc.dart';
+import 'package:my_sports_tracker/presentation/utils/custom_print.dart';
 
-void main() {
+import 'core/constants/app_bools.dart';
+import 'core/constants/app_strings.dart';
+import 'data/repositories/app_config_repository.dart';
+
+Future<void> main() async {
+  AppConfigRepository appConfigRepository = AppConfigRepository();
+  CustomPrint customPrint = CustomPrint();
+
+  AppBools.isDbConnected = await appConfigRepository.testApi();
+  customPrint.print(message: 'isDbConnected: ${AppBools.isDbConnected}');
+
   runApp(const MyApp());
 }
 
@@ -23,7 +34,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'My Sports Tracker',
+        title: AppStrings.appName,
         initialRoute: AppRouter.home,
         onGenerateRoute: AppRouter.onGenerateRoute,
       ),

@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
-import '../../../../data/models/inning_model.dart';
+import '../../../../core/constants/app_strings.dart';
+import '../../../../data/models/match_models/inning/inning_model.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import '../../../widgets/batting_statistics_widget.dart';
 import '../../../widgets/bowling_statistics_widget.dart';
@@ -38,7 +39,7 @@ class ConcludedScorecardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 uiUtilityPackage.customText(
-                  text: 'Batting Scorecard'.toUpperCase(),
+                  text: AppStrings.battingScorecard.toUpperCase(),
                   fontSize: TextSize.label,
                   overrideColor: appThemeState.themeClass.white,
                 ),
@@ -76,7 +77,7 @@ class ConcludedScorecardWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 uiUtilityPackage.customText(
-                  text: 'Bowling Scorecard'.toUpperCase(),
+                  text: AppStrings.bowlingScorecard.toUpperCase(),
                   fontSize: TextSize.label,
                   overrideColor: appThemeState.themeClass.white,
                 ),

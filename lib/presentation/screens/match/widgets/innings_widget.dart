@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_sports_tracker/core/constants/app_strings.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
-import '../../../../data/models/inning_model.dart';
+import '../../../../data/models/match_models/inning/inning_model.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
 import 'active_scorecard_widget.dart';
 import 'concluded_scorecard_widget.dart';
@@ -39,8 +40,8 @@ class InningsWidget extends StatelessWidget {
                 uiUtilityPackage.customText(
                   text:
                       inningsIndex > 1
-                          ? 'SUPER OVER INNINGS ${inningsIndex - 1}'
-                          : 'Innings ${inningsIndex + 1}',
+                          ? '${AppStrings.superOverInnings.toUpperCase()} ${inningsIndex - 1}'
+                          : '${AppStrings.innings.toUpperCase()} ${inningsIndex + 1}',
                   fontSize: TextSize.title,
                   overrideColor: appThemeState.themeClass.white,
                   fontWeight: FontWeight.bold,
@@ -53,14 +54,14 @@ class InningsWidget extends StatelessWidget {
               children: [
                 uiUtilityPackage.customText(
                   text:
-                      'Team ${inningModel.currentBattingTeam}: ${inningModel.totalRuns}/${inningModel.totalWickets}',
+                      '${AppStrings.team} ${inningModel.currentBattingTeam}: ${inningModel.totalRuns}/${inningModel.totalWickets}',
                   fontSize: TextSize.subTitle,
                   overrideColor: appThemeState.themeClass.white,
                   fontWeight: FontWeight.bold,
                 ),
                 uiUtilityPackage.customText(
                   text:
-                      'Overs: ${(inningModel.totalBalls / 6).floor()}.${inningModel.totalBalls % 6}(${inningsIndex > 1 ? '1.0' : maxBalls / 6})',
+                      '${AppStrings.overs}: ${(inningModel.totalBalls / 6).floor()}.${inningModel.totalBalls % 6}(${inningsIndex > 1 ? '1.0' : maxBalls / 6})',
                   fontSize: TextSize.subTitle,
                   overrideColor: appThemeState.themeClass.white,
                   fontWeight: FontWeight.bold,

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ui_utility_package/enums.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
+import '../../core/constants/app_strings.dart';
 import '../../logics/cubits/app_theme_cubit.dart';
 
 class BowlingStatisticsWidget extends StatelessWidget {
@@ -40,7 +41,7 @@ class BowlingStatisticsWidget extends StatelessWidget {
                     hideHeading
                         ? SizedBox.shrink()
                         : uiUtilityPackage.customText(
-                          text: 'Bowler',
+                          text: AppStrings.bowler,
                           fontSize: TextSize.normal,
                           overrideColor:
                               appThemeState.themeClass.textCaptionColor,
