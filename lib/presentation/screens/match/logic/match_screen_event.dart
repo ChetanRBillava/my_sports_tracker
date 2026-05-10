@@ -82,3 +82,8 @@ class AddNewMatchEvent extends MatchScreenEvent {
   final BuildContext context;
   AddNewMatchEvent({required this.context});
 }
+
+class AnimateLottieEvent extends MatchScreenEvent {
+  final bool animate;
+  AnimateLottieEvent({required this.animate});
+}

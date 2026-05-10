@@ -2,7 +2,7 @@ name: my_sports_tracker
 description: "A new Flutter project for sports tracking."
 
 publish_to: 'none'
-version: 2.0.0+6
+version: 2.0.1+7
 
 environment:
   sdk: ^3.7.2
@@ -24,6 +24,13 @@ dependencies:
   dio:
   json_serializable:
   build_runner:
+  firebase_core:
+  firebase_analytics:
+  firebase_crashlytics:
+  firebase_remote_config:
+  firebase_messaging:
+  flutter_local_notifications:
+  lottie:
 
 dev_dependencies:
   flutter_test:
@@ -34,5 +41,6 @@ dev_dependencies:
 flutter:
   assets:
     - assets/
+    - assets/lottie/
 
   uses-material-design: true

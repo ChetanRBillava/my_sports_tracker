@@ -6,8 +6,11 @@ import 'package:screenshot/screenshot.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../core/services/app_analytics.dart';
+
 class ScreenshotControllers {
   CustomPrint customPrint = CustomPrint();
+  static AppAnalytics appAnalytics = AppAnalytics();
 
   Uint8List? imageBytes;
 
@@ -28,9 +31,15 @@ class ScreenshotControllers {
         displayText: displayText,
         // '${isPlayerStat ? '' : filters[selectedFilter].monthName?.toUpperCase()} ${key.replaceAll('_', ' ').toUpperCase()}',
       );
-    } catch (e) {
+    } catch (e, stack) {
       customPrint.print(
         message: 'Exception caught in captureScreenshot: $key - $e',
+      );
+      appAnalytics.logCrashlytics(
+        exception: e,
+        stack: stack,
+        printDetails: true,
+        reason: 'Screenshot capture failed for $key',
       );
     }
   }

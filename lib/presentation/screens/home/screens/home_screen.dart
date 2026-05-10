@@ -1,8 +1,10 @@
 import 'dart:math';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:my_sports_tracker/core/constants/app_bools.dart';
 import 'package:my_sports_tracker/data/models/player_models/player_mini/player_mini_model.dart';
 import 'package:my_sports_tracker/data/models/player_models/player/player_model.dart';
 import 'package:my_sports_tracker/data/models/match_models/series/series_model.dart';
@@ -15,10 +17,9 @@ import 'package:ui_utility_package/ui_utility_package.dart';
 import '../../../../core/constants/app_enums.dart';
 import '../../../../core/constants/app_strings.dart';
 import '../../../../logics/cubits/app_theme_cubit.dart';
-import '../../../router/AppRouter.dart';
+import '../../../router/app_router.dart';
 import '../../../utils/custom_print.dart';
 import '../../match/logic/match_screen_event.dart';
-import '../../match/screens/match_screen.dart';
 import '../logic/home_screen_event.dart';
 import '../widgets/player_tile_widget.dart';
 import '../widgets/series_tile_widget.dart';
@@ -41,8 +42,51 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       context.read<AppThemeCubit>().checkTheme();
+      checkBoot();
     });
     super.initState();
+  }
+
+  Future<void> checkBoot() async {
+    if (AppBools.isOnMaintenance || AppBools.forceUpdate) {
+      AppRouter.navigateTo(
+        routeName: AppRouter.maintenance,
+        context: context,
+        replace: true,
+      );
+    } else if (AppBools.optionalUpdate) {
+      final cubit = context.read<AppThemeCubit>();
+      Color? dialogBackground, textColor, buttonColor;
+
+      if (mounted) {
+        textColor = await cubit.getColor(color: AppColors.white);
+        dialogBackground = await cubit.getColor(
+          color: AppColors.cardBackgroundColor,
+        );
+        buttonColor = await cubit.getColor(
+          color: AppColors.buttonBackgroundColor,
+        );
+        if (!mounted) return;
+        uiUtilityPackage.showCustomDialog(
+          backgroundColor: dialogBackground,
+          context: context,
+          title: AppStrings.optionalUpdate,
+          overrideTitleTextColor: textColor,
+          content: uiUtilityPackage.customText(
+            text: AppStrings.optionalUpdateMessage,
+            fontSize: TextSize.subTitle,
+          ),
+          actions: [
+            uiUtilityPackage.customButton(
+              buttonColor: buttonColor,
+              onTap: () {},
+              buttonText: AppStrings.update,
+              overrideTextColor: textColor,
+            ),
+          ],
+        );
+      }
+    }
   }
 
   @override
@@ -525,6 +569,30 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           routeName: AppRouter.settings,
                           context: context,
                         ),
+                    onDoubleTap: () {
+                      customPrint.print(message: 'Testing Fatal Crash');
+                      FirebaseCrashlytics.instance.log(
+                        'Manually triggered fatal crash',
+                      );
+                      throw Exception('Testing fatal Crashlytics error');
+                    },
+                    onLongPress: () async {
+                      try {
+                        customPrint.print(message: 'Testing Non-Fatal Crash');
+                        FirebaseCrashlytics.instance.log(
+                          'Manually triggered non-fatal crash',
+                        );
+                        throw Exception('Non-fatal test error');
+                      } catch (e, stack) {
+                        customPrint.print(message: 'Exception Caught: $e');
+                        await FirebaseCrashlytics.instance.recordError(
+                          e,
+                          stack,
+                          fatal: false,
+                          reason: 'Testing non-fatal Crashlytics error',
+                        );
+                      }
+                    },
                     type: ButtonType.icon,
                     icon: Icons.settings,
                     iconColor: appThemeState.themeClass.white,

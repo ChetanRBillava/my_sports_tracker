@@ -1,11 +1,12 @@
 class AppStrings {
   ///App defaults
   static String appName = 'My Sports Tracker';
-  static String appVersion = '2.0.0';
+  static String appVersion = '2.0.1';
 
   ///Generic strings
   static String ok = 'OK';
   static String cancel = 'Cancel';
+  static String update = 'Update';
   static String yes = 'Yes';
   static String no = 'No';
   static String save = 'Save';
@@ -17,6 +18,7 @@ class AppStrings {
   static String homeScreenTitle = 'Home Screen';
   static String settingsScreenTitle = 'Settings Screen';
   static String matchScreenTitle = 'Match Screen';
+  static String maintenanceScreenTitle = 'Maintenance Screen';
 
   ///Bottom bar Titles
   static String bottomBarTitle1 = players;
@@ -103,4 +105,13 @@ class AppStrings {
   static String playerNameHelperText = 'Enter player name...';
   static String addedNewPlayerMessage = 'Added new player';
   static String addedPlayersMessage = 'Added players';
+
+  ///Other Texts
+  static String maintenanceScreenMessage =
+      'This app is currently under maintenance, please come back some time later!!!';
+  static String optionalUpdate = 'Optional Update';
+  static String optionalUpdateMessage =
+      'An optional update is available. Would you like to update now?';
+  static String forceUpdateMessage =
+      'This app is currently using an older version. Please update the app to continue using!!!';
 }

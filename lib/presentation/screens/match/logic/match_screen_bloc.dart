@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,12 +10,14 @@ import 'package:my_sports_tracker/data/models/match_models/series/series_model.d
 import 'package:my_sports_tracker/presentation/screens/home/logic/home_screen_bloc.dart';
 
 import '../../../../core/constants/app_enums.dart';
+import '../../../../core/constants/app_images.dart';
+import '../../../../core/services/app_analytics.dart';
 import '../../../../data/models/match_models/over/over_model.dart';
 import '../../../../data/models/statistic_models/bowling/bowling_model.dart';
 import '../../../../data/models/match_models/match/match_model.dart';
 import '../../../../data/models/statistic_models/man_of_the_match/man_of_the_match_model.dart';
 import '../../../../data/models/statistic_models/match_stats/match_stats_model.dart';
-import '../../../router/AppRouter.dart';
+import '../../../router/app_router.dart';
 import '../../../utils/custom_print.dart';
 import '../../home/logic/home_screen_event.dart';
 import 'match_screen_event.dart';
@@ -21,6 +25,7 @@ import 'match_screen_state.dart';
 
 class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
   CustomPrint customPrint = CustomPrint();
+  AppAnalytics appAnalytics = AppAnalytics();
   MatchScreenBloc()
     : super(
         MatchScreenState(
@@ -40,6 +45,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
     on<RevertScoreEvent>(revertScore);
     on<ConcludeInningsEvent>(concludeInnings);
     on<AddNewMatchEvent>(addNewMatch);
+    on<AnimateLottieEvent>(animateLottie);
   }
 
   void init(MatchInitEvent event, Emitter<MatchScreenState> emit) async {
@@ -78,6 +84,11 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
         updateLineup: updateLineup,
       ),
     );
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Init Event',
+      parameters: {'series': event.series.name},
+    );
   }
 
   Future<SeriesModel> getSeries() async {
@@ -112,6 +123,14 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
 
     emit(state.copyWith(series: seriesModel, matchIndex: 0));
     AppRouter.navigateTo(routeName: AppRouter.match, context: event.context);
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Match Confirm Team Event',
+      parameters: {
+        'team1': jsonEncode(seriesModel.team1),
+        'team2': jsonEncode(seriesModel.team2),
+      },
+    );
 
     event.context.read<HomeScreenBloc>().add(
       UpdateAndStoreDataEvent(series: seriesModel, seriesId: state.seriesIndex),
@@ -204,6 +223,14 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
     seriesModel.matches[state.matchIndex] = matchModel;
 
     emit(state.copyWith(series: seriesModel, inningsIndex: 0, overIndex: 0));
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Match Toss Event',
+      parameters: {
+        'toss': 'Team ${event.tossWonBy}',
+        'batOrBowl': '${event.batOrBowl == 1 ? 'bat' : 'bowl'} first',
+      },
+    );
 
     event.context.read<HomeScreenBloc>().add(
       UpdateAndStoreDataEvent(series: seriesModel, seriesId: state.seriesIndex),
@@ -339,6 +366,14 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
 
     emit(state.copyWith(series: seriesModel, updateLineup: false));
 
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Match Update Player Event',
+      parameters: {
+        'currentBatsman': inningModel.batting[event.batterIndex].player.name,
+        'currentBowler': inningModel.bowling[event.bowlerIndex].player.name,
+      },
+    );
+
     event.context.read<HomeScreenBloc>().add(
       UpdateAndStoreDataEvent(series: seriesModel, seriesId: state.seriesIndex),
     );
@@ -403,6 +438,14 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
 
     emit(state.copyWith(series: seriesModel));
 
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Match Add Player Event',
+      parameters: {
+        'team': 'Team ${event.teamNum}',
+        'player': event.player.name,
+      },
+    );
+
     event.context.read<HomeScreenBloc>().add(
       UpdateAndStoreDataEvent(series: seriesModel, seriesId: state.seriesIndex),
     );
@@ -414,6 +457,10 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
   ) {
     bool updateLineup = false;
     customPrint.print(message: 'Updating score: ${event.score}');
+
+    if (['4', '6', 'W'].contains(event.score)) {
+      triggerAnimation(event.score, emit);
+    }
     SeriesModel seriesModel = state.series!;
     int inningsIndex = state.inningsIndex,
         matchIndex = state.matchIndex,
@@ -580,6 +627,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
         );
 
         seriesModel.matches[matchIndex] = matchModel;
+        triggerAnimation('won', emit);
       }
     } else if (inningsIndex == 2 &&
         (inningModel.totalBalls == 6 || inningModel.totalWickets > 0)) {
@@ -804,6 +852,7 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
         );
 
         seriesModel.matches[matchIndex] = matchModel;
+        triggerAnimation('won', emit);
       }
     } else if (inningModel.totalBalls == matchModel.maxBalls ||
         inningModel.totalWickets == inningModel.batting.length) {
@@ -894,9 +943,33 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
       ),
     );
 
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Update Score Event',
+      parameters: {'score': event.score},
+    );
+
     event.context.read<HomeScreenBloc>().add(
       UpdateAndStoreDataEvent(series: seriesModel, seriesId: state.seriesIndex),
     );
+  }
+
+  void triggerAnimation(String score, Emitter<MatchScreenState> emit) {
+    String lottieName = '';
+    if (score == '4') {
+      lottieName = AppImages.four;
+    } else if (score == '6') {
+      lottieName = AppImages.six;
+    } else if (score == 'W') {
+      lottieName = AppImages.wicket;
+    } else {
+      lottieName = AppImages.celebration;
+    }
+
+    emit(state.copyWith(lottieImage: lottieName, animate: true));
+  }
+
+  void animateLottie(AnimateLottieEvent event, Emitter<MatchScreenState> emit) {
+    emit(state.copyWith(animate: event.animate));
   }
 
   void revertScore(RevertScoreEvent event, Emitter<MatchScreenState> emit) {
@@ -945,6 +1018,11 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
 
       inningModel.bowling[inningModel.currentBowler].noBalls -= 1;
     }
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Revert Score Event',
+      parameters: {'score': score},
+    );
 
     event.context.read<HomeScreenBloc>().add(
       UpdatePlayerStatsEvent(
@@ -1197,6 +1275,11 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
       ),
     );
 
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Conclude Innings Event',
+      parameters: {'matchIndex': matchIndex, 'inningsIndex': inningsIndex},
+    );
+
     event.context.read<HomeScreenBloc>().add(
       UpdateAndStoreDataEvent(series: seriesModel, seriesId: state.seriesIndex),
     );
@@ -1205,12 +1288,12 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
   void addNewMatch(AddNewMatchEvent event, Emitter<MatchScreenState> emit) {
     SeriesModel seriesModel = state.series!;
 
-    int maxBalls = seriesModel?.team1.length ?? 0;
-    if ((seriesModel?.team2.length ?? 0) > maxBalls) {
-      maxBalls = seriesModel?.team2.length ?? 0;
+    int maxBalls = seriesModel.team1.length, matchIndex = state.matchIndex + 1;
+    if ((seriesModel.team2.length) > maxBalls) {
+      maxBalls = seriesModel.team2.length;
     }
 
-    seriesModel?.matches.add(
+    seriesModel.matches.add(
       MatchModel(
         team1: seriesModel.team1,
         team2: seriesModel.team2,
@@ -1226,11 +1309,16 @@ class MatchScreenBloc extends Bloc<MatchScreenEvent, MatchScreenState> {
     emit(
       state.copyWith(
         series: seriesModel,
-        matchIndex: state.matchIndex + 1,
+        matchIndex: matchIndex,
         inningsIndex: 0,
         overIndex: 0,
         updateLineup: false,
       ),
+    );
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Match Bloc Add New Match Event',
+      parameters: {'matchIndex': matchIndex},
     );
 
     event.context.read<HomeScreenBloc>().add(

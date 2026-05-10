@@ -3,7 +3,8 @@ import 'package:my_sports_tracker/data/models/match_models/series/series_model.d
 class MatchScreenState {
   final int seriesIndex, matchIndex, inningsIndex, overIndex;
   final SeriesModel? series;
-  final bool updateLineup;
+  final bool updateLineup, animate;
+  final String lottieImage;
 
   const MatchScreenState({
     required this.seriesIndex,
@@ -11,6 +12,8 @@ class MatchScreenState {
     required this.inningsIndex,
     required this.overIndex,
     required this.updateLineup,
+    this.animate = false,
+    this.lottieImage = '',
     this.series,
   });
 
@@ -21,6 +24,8 @@ class MatchScreenState {
     int? overIndex,
     SeriesModel? series,
     bool? updateLineup,
+    String? lottieImage,
+    bool? animate,
   }) {
     return MatchScreenState(
       matchIndex: matchIndex ?? this.matchIndex,
@@ -29,16 +34,8 @@ class MatchScreenState {
       overIndex: overIndex ?? this.overIndex,
       series: series ?? this.series,
       updateLineup: updateLineup ?? this.updateLineup,
-    );
-  }
-
-  MatchScreenState init() {
-    return MatchScreenState(
-      seriesIndex: 0,
-      matchIndex: 0,
-      inningsIndex: 0,
-      overIndex: 0,
-      updateLineup: false,
+      lottieImage: lottieImage ?? this.lottieImage,
+      animate: animate ?? this.animate,
     );
   }
 
@@ -49,5 +46,7 @@ class MatchScreenState {
     overIndex,
     series,
     updateLineup,
+    lottieImage,
+    animate,
   ];
 }

@@ -11,6 +11,7 @@ import 'package:ui_utility_package/ui_utility_package.dart';
 import 'package:file_picker/file_picker.dart';
 
 import '../../../core/constants/app_strings.dart';
+import '../../../core/services/app_analytics.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -22,6 +23,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreenState extends State<SettingsScreen> {
   UiUtilityPackage uiUtilityPackage = UiUtilityPackage();
   CustomPrint customPrint = CustomPrint();
+  AppAnalytics appAnalytics = AppAnalytics();
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +64,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       uiUtilityPackage.customButton(
                         onTap: () async {
+                          appAnalytics.logEventAnalytics(
+                            eventName: 'Settings screen - data transfer',
+                            parameters: {'type': 'Import Players'},
+                          );
                           // File picker or manual path
                           final result = await FilePicker.platform.pickFiles(
                             type: FileType.custom,
@@ -85,6 +91,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   overrideColor: appThemeState.themeClass.white,
                                   fontWeight: FontWeight.bold,
                                 ),
+                              );
+                              appAnalytics.logCrashlytics(
+                                exception: 'Import failed',
+                                printDetails: true,
+                                reason: 'Wrong file selected for player import',
                               );
                             } else {
                               String resp =
@@ -140,6 +151,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       uiUtilityPackage.customButton(
                         onTap: () async {
+                          appAnalytics.logEventAnalytics(
+                            eventName: 'Settings screen - data transfer',
+                            parameters: {'type': 'Export Players'},
+                          );
                           final filePath =
                               await DataTransferService.exportData();
                           if (filePath != null) {
@@ -191,6 +206,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       uiUtilityPackage.customButton(
                         onTap: () async {
+                          appAnalytics.logEventAnalytics(
+                            eventName: 'Settings screen - data transfer',
+                            parameters: {'type': 'Import Series'},
+                          );
                           // File picker or manual path
                           final result = await FilePicker.platform.pickFiles(
                             type: FileType.custom,
@@ -214,6 +233,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
                                   overrideColor: appThemeState.themeClass.white,
                                   fontWeight: FontWeight.bold,
                                 ),
+                              );
+                              appAnalytics.logCrashlytics(
+                                exception: 'Import failed',
+                                printDetails: true,
+                                reason: 'Wrong file selected for series import',
                               );
                             } else {
                               String resp =
@@ -269,6 +293,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       ),
                       uiUtilityPackage.customButton(
                         onTap: () async {
+                          appAnalytics.logEventAnalytics(
+                            eventName: 'Settings screen - data transfer',
+                            parameters: {'type': 'Export Series'},
+                          );
                           final filePath = await DataTransferService.exportData(
                             isSeries: true,
                           );

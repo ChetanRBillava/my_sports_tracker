@@ -9,6 +9,8 @@ import 'package:screenshot/screenshot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ui_utility_package/ui_utility_package.dart';
 
+import '../../../../core/constants/app_bools.dart';
+import '../../../../core/services/app_analytics.dart';
 import '../../../../data/models/player_models/player_mini/player_mini_model.dart';
 import '../../../../data/models/match_models/series/series_model.dart';
 import '../../../../data/models/player_models/stats/player_batting_stats/player_batting_stats.dart';
@@ -24,6 +26,7 @@ import 'home_screen_state.dart';
 class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
   CustomPrint customPrint = CustomPrint();
   UiUtilityPackage uiUtilityPackage = UiUtilityPackage();
+  AppAnalytics appAnalytics = AppAnalytics();
 
   HomeScreenBloc()
     : super(
@@ -49,7 +52,9 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     on<UpdatePlayerStatsEvent>(updatePlayerStats);
     on<UpdateAndStoreDataEvent>(updateAndStoreData);
 
-    add(InitEvent());
+    if (!AppBools.isOnMaintenance) {
+      add(InitEvent());
+    }
   }
 
   void _init(InitEvent event, Emitter<HomeScreenState> emit) async {
@@ -209,10 +214,21 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
 
       add(ToggleFilterEvent(index: 0));
 
-      updateGameStats(emit);
-    } catch (e) {
-      customPrint.print(
-        message: 'Exception caught while loading players from assets: $e',
+      await updateGameStats(emit);
+
+      appAnalytics.logEventAnalytics(
+        eventName: 'Home Bloc Init Event',
+        parameters: {'type': 'Init bloc'},
+      );
+    } catch (e, stack) {
+      String message = 'Exception caught while Initializing home screen bloc';
+      customPrint.print(message: '$message: $e');
+
+      appAnalytics.logCrashlytics(
+        exception: e,
+        stack: stack,
+        printDetails: true,
+        reason: message,
       );
     }
   }
@@ -380,16 +396,32 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
         add(ToggleFilterEvent(index: 0));
       }
 
-      updateGameStats(emit);
-    } catch (e) {
+      await updateGameStats(emit);
+
+      appAnalytics.logEventAnalytics(
+        eventName: 'Home Bloc Init Event',
+        parameters: {'type': 'Data Import'},
+      );
+    } catch (e, stack) {
       customPrint.print(
         message: 'Exception caught while loading data from import: $e',
+      );
+
+      appAnalytics.logCrashlytics(
+        exception: e,
+        stack: stack,
+        printDetails: true,
+        reason: 'Data import failure',
       );
     }
   }
 
-  void updateGameStats(Emitter<HomeScreenState> emit) {
+  Future<void> updateGameStats(Emitter<HomeScreenState> emit) async {
     try {
+      appAnalytics.logEventAnalytics(
+        eventName: 'Home Bloc Init Event',
+        parameters: {'type': 'Update Game Stats'},
+      );
       List<PlayerModel> players =
           state.players.map((p) => p.copyWith()).toList();
       List<SeriesModel> series = state.series.map((p) => p.copyWith()).toList();
@@ -485,9 +517,16 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       }
 
       emit(state.copyWith(series: series, players: players));
-    } catch (e) {
+    } catch (e, stack) {
       customPrint.print(
         message: 'Exception caught while updating game stats: $e',
+      );
+
+      appAnalytics.logCrashlytics(
+        exception: e,
+        stack: stack,
+        printDetails: true,
+        reason: 'Unable to update game stats',
       );
     }
   }
@@ -499,6 +538,11 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     ToggleBottomBarEvent event,
     Emitter<HomeScreenState> emit,
   ) async {
+    appAnalytics.logEventAnalytics(
+      eventName: 'Home Bloc Toggle Bottom Bar Event',
+      parameters: {'index': event.index},
+    );
+
     customPrint.print(message: 'Toggling bottom bar to index: ${event.index}');
     emit(state.copyWith(selectedBottomBarIndex: event.index));
   }
@@ -507,6 +551,14 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     ToggleFilterEvent event,
     Emitter<HomeScreenState> emit,
   ) async {
+    appAnalytics.logEventAnalytics(
+      eventName: 'Home Bloc Toggle Filter Event',
+      parameters: {
+        'index': event.index,
+        'monthIndex': state.statFilters[event.index].month ?? '',
+        'monthName': state.statFilters[event.index].monthName ?? '',
+      },
+    );
     List<StatisticsTileModel> temp =
         state.statTiles.map((p) => p.copyWith()).toList();
     List<PlayerModel> tempPlayers =
@@ -728,6 +780,11 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     );
 
     emit(state.copyWith(mainStatTileFlags: temp));
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Home Bloc Update Main Flag Event',
+      parameters: {'flag': event.flag, 'status': temp[event.flag] ?? true},
+    );
   }
 
   void updateSubFlag(UpdateSubFlagEvent event, Emitter<HomeScreenState> emit) {
@@ -740,6 +797,14 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     );
 
     emit(state.copyWith(subStatTileFlags: statTileFlags));
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Home Bloc Update Sub Flag Event',
+      parameters: {
+        'flag': event.flag.name,
+        'status': statTileFlags[event.flag] ?? true,
+      },
+    );
   }
 
   void addPlayer(AddPlayerEvent event, Emitter<HomeScreenState> emit) {
@@ -782,6 +847,11 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     );
 
     emit(state.copyWith(players: tempPlayers));
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Home Bloc Add Player Event',
+      parameters: {'playerName': event.name},
+    );
   }
 
   Future<List<PlayerModel>> getPlayers() async {
@@ -816,6 +886,11 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     );
 
     emit(state.copyWith(series: tempSeries));
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Home Bloc Add Series Event',
+      parameters: {'newSeries': tempSeries.last.toRawJson()},
+    );
   }
 
   Future<void> updatePlayerStats(
@@ -964,6 +1039,16 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       'players',
       jsonEncode(players.map((p) => p.toMap()).toList()),
     );
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Home Bloc Update Player Stats Event',
+      parameters: {
+        'player': event.player.name,
+        'playerType': event.type.name,
+        'activity': event.activity,
+        'revert': event.revert,
+      },
+    );
   }
 
   Future<void> updateAndStoreData(
@@ -981,6 +1066,11 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
     prefs.setString(
       'series',
       jsonEncode(series.map((p) => p.toMap()).toList()),
+    );
+
+    appAnalytics.logEventAnalytics(
+      eventName: 'Home Bloc Update And Store Data Event',
+      parameters: {'seriesId': event.seriesId, 'seriesName': event.series.name},
     );
   }
 }

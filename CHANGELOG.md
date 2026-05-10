@@ -25,6 +25,25 @@ Here we write the updates of future releases.
 
 
 
+## [2.0.1] - 10-05-2026
+
+### Added
+- Lottie jsons in "assets/lottie" folder
+- "app_images" file to store all image paths
+- animation widget for match animations
+- analytics, navigator, notification handler and remote config services
+- bootstrap service to initialize all the services
+- maintenance screen
+
+### Changed
+- Gradle files for firebase and other services
+- Crashlytics codes in all files
+
+### Removed
+- sensitive file
+
+
+
 ## [2.0.0] - 03-04-2026
 
 ### Added

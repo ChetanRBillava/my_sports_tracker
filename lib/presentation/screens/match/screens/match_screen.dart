@@ -2,6 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:lottie/lottie.dart';
+import 'package:my_sports_tracker/core/constants/app_images.dart';
 import 'package:my_sports_tracker/core/constants/app_strings.dart';
 import 'package:my_sports_tracker/data/models/match_models/inning/inning_model.dart';
 import 'package:my_sports_tracker/data/models/match_models/series/series_model.dart';
@@ -20,6 +22,7 @@ import '../../../utils/custom_print.dart';
 import '../../home/logic/home_screen_bloc.dart';
 import '../logic/match_screen_event.dart';
 import '../logic/match_screen_state.dart';
+import '../widgets/match_animation_widget.dart';
 import '../widgets/match_card_widget.dart';
 
 class MatchScreen extends StatefulWidget {
@@ -528,7 +531,7 @@ class _MatchScreenState extends State<MatchScreen> {
                                           actions: [
                                             uiUtilityPackage.customButton(
                                               buttonText:
-                                                  AppStrings.confirm
+                                                  AppStrings.cancel
                                                       .toUpperCase(),
                                               overrideTextColor: textColor,
                                               onTap: () {
@@ -768,6 +771,17 @@ class _MatchScreenState extends State<MatchScreen> {
                           ),
                         ],
                       ),
+                    ),
+
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 600),
+                      height: matchScreenState.animate ? 100 : 0,
+                      child:
+                          matchScreenState.animate
+                              ? MatchAnimationWidget(
+                                lottie: matchScreenState.lottieImage,
+                              )
+                              : SizedBox.shrink(),
                     ),
                     matchScreenState.series!.matches.isEmpty
                         ? SizedBox.shrink()

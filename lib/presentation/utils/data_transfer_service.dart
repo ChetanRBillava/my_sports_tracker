@@ -6,8 +6,11 @@ import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../core/services/app_analytics.dart';
+
 class DataTransferService {
   static CustomPrint customPrint = CustomPrint();
+  static AppAnalytics appAnalytics = AppAnalytics();
   static Future<String> getDownloadsPath() async {
     final directory = await getExternalStorageDirectory();
     return '${directory!.path}/Download/tournament_data/';
@@ -44,8 +47,14 @@ class DataTransferService {
       customPrint.print(message: 'Temp: $temp');
 
       return filePath;
-    } catch (e) {
+    } catch (e, stack) {
       customPrint.print(message: 'Export failed: $e');
+      appAnalytics.logCrashlytics(
+        exception: e,
+        stack: stack,
+        printDetails: true,
+        reason: 'Export failed for ${isSeries ? "series" : "players"}',
+      );
       return null;
     }
   }
@@ -64,8 +73,14 @@ class DataTransferService {
         return filePath;
       }
       return null;
-    } catch (e) {
+    } catch (e, stack) {
       customPrint.print(message: 'Save failed: $e');
+      appAnalytics.logCrashlytics(
+        exception: e,
+        stack: stack,
+        printDetails: true,
+        reason: 'Saving file failed',
+      );
       return null;
     }
   }
@@ -92,24 +107,15 @@ class DataTransferService {
 
       final content = await file.readAsString();
 
-      // final List<dynamic> importJson = jsonDecode(content);
-
-      // Save to SharedPreferences
-      // final prefs = await SharedPreferences.getInstance();
-      // if (isSeries) {
-      //   await prefs.setString('series', content);
-      // } else {
-      //   await prefs.setString('players', content);
-      // }
-
-      // Update app state (call in setState)
-      // setState(() {
-      //   players = importJson.map((json) => PlayerMiniModel.fromMap(json)).toList();
-      // });
-
       return content;
-    } catch (e) {
+    } catch (e, stack) {
       customPrint.print(message: 'Import failed: $e');
+      appAnalytics.logCrashlytics(
+        exception: e,
+        stack: stack,
+        printDetails: true,
+        reason: 'Import failed for ${isSeries ? "series" : "players"}',
+      );
       return '';
     }
   }
